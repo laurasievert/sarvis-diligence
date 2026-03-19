@@ -7,6 +7,7 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1a18'/><text y='22' x='6' font-size='18' fill='white' font-family='sans-serif' font-weight='bold'>S</text></svg>">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
   body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f0; color: #1a1a18; min-height: 100vh; }
@@ -112,7 +113,7 @@
   .tab.active { color: #1a1a18; border-bottom-color: #1a1a18; }
 
   /* ─── Layout ─── */
-  .page-content { max-width: 900px; margin: 0 auto; padding: 24px; }
+  .page-content { max-width: 1200px; margin: 0 auto; padding: 24px; }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
 
@@ -125,7 +126,7 @@
     letter-spacing: 0.06em;
     margin: 1.5rem 0 0.6rem;
   }
-  .card { background: #f5f5f0; border-radius: 8px; padding: 0.85rem 1rem; }
+  .card { background: #f5f5f0; border-radius: 8px; padding: 0.85rem 1rem; border: 0.5px solid #ddd; }
   .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
   .metric-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   @media (max-width: 600px) {
@@ -234,6 +235,11 @@
   .pl-table tbody td:not(:first-child) { text-align: right; }
   .pl-table tbody tr:hover td { background: #fafaf8; }
 
+  .thead-category th { padding: 5px 12px 4px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; border-bottom: none; }
+  .th-actuals { color: #0F6E56; background: #f0faf5; border-radius: 4px 4px 0 0; text-align: center; }
+  .th-estimated { color: #854F0B; background: #fdf6ea; border-radius: 4px 4px 0 0; text-align: center; }
+  .th-ann { background: #fdf6ea; }
+  .cell-ann { background: #fdf6ea; font-style: italic; }
   .row-group-header td { background: #f0f0eb; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: #888; padding: 6px 12px 5px; border-bottom: 0.5px solid #ddd; }
   .row-indent { padding-left: 20px !important; }
   .row-subtotal td { font-weight: 600; }
@@ -1066,7 +1072,29 @@ function renderCharts() {
     return parseFloat(((p.operatingIncome / p.revenue) * 100).toFixed(1));
   });
 
-  const axisTitle = (text) => ({ display: true, text, color: '#aaa', font: { size: 10 } });
+  // Register datalabels plugin globally
+  if (window.ChartDataLabels) Chart.register(window.ChartDataLabels);
+
+  const fmtK = v => v == null ? '' : '$' + (Math.abs(v) >= 1e6 ? (v/1e6).toFixed(2)+'M' : Math.abs(v) >= 1000 ? (v/1000).toFixed(0)+'K' : v);
+
+  const dlBar = {
+    display: true,
+    anchor: 'end',
+    align: 'end',
+    offset: 2,
+    font: { size: 10, weight: '500' },
+    color: ctx => ctx.dataset.data[ctx.dataIndex] < 0 ? '#A32D2D' : '#444',
+    formatter: v => fmtK(v)
+  };
+
+  const dlLine = {
+    display: true,
+    align: 'top',
+    offset: 6,
+    font: { size: 10, weight: '500' },
+    color: '#444',
+    formatter: v => v == null ? '' : v + '%'
+  };
 
   const chartDefaults = {
     responsive: true,
@@ -1084,31 +1112,21 @@ function renderCharts() {
     data: {
       labels: years,
       datasets: [
-        {
-          label: 'Revenue',
-          data: revData,
-          backgroundColor: '#d4ede7',
-          borderColor: '#0F6E56',
-          borderWidth: 1.5,
-          borderRadius: 4
-        },
-        {
-          label: 'Op. Income / (Loss)',
-          data: opData,
-          backgroundColor: opData.map(v => v >= 0 ? '#0F6E56' : '#A32D2D'),
-          borderRadius: 4
-        }
+        { label: 'Revenue', data: revData, backgroundColor: '#d4ede7', borderColor: '#0F6E56', borderWidth: 1.5, borderRadius: 4 },
+        { label: 'Op. Income / (Loss)', data: opData, backgroundColor: opData.map(v => v >= 0 ? '#0F6E56' : '#A32D2D'), borderRadius: 4 }
       ]
     },
     options: {
       ...chartDefaults,
+      layout: { padding: { top: 24 } },
       plugins: {
         legend: { display: true, labels: { font: { size: 11 }, color: '#555', boxWidth: 10, padding: 12 } },
-        tooltip: { mode: 'index', callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}` } }
+        tooltip: { mode: 'index', callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}` } },
+        datalabels: dlBar
       },
       scales: {
         x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } },
-        y: { title: axisTitle('USD'), grid: { color: '#f0f0eb' }, ticks: { font: { size: 11 }, color: '#888', callback: v => '$' + (Math.abs(v) >= 1000 ? (v/1000).toFixed(0)+'K' : v) } }
+        y: { grid: { color: '#f0f0eb' }, ticks: { font: { size: 11 }, color: '#888', callback: v => '$' + (Math.abs(v) >= 1000 ? (v/1000).toFixed(0)+'K' : v) } }
       }
     }
   });
@@ -1131,13 +1149,15 @@ function renderCharts() {
     },
     options: {
       ...chartDefaults,
+      layout: { padding: { top: 24 } },
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` Op. Margin: ${ctx.raw}%` } }
+        tooltip: { callbacks: { label: ctx => ` Op. Margin: ${ctx.raw}%` } },
+        datalabels: dlLine
       },
       scales: {
         x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } },
-        y: { title: axisTitle('Operating Margin (%)'), grid: { color: '#f0f0eb' }, ticks: { font: { size: 11 }, color: '#888', callback: v => v + '%' } }
+        y: { grid: { color: '#f0f0eb' }, ticks: { font: { size: 11 }, color: '#888', callback: v => v + '%' } }
       }
     }
   });
@@ -1163,25 +1183,27 @@ function renderCharts() {
     ];
     const costData = costKeys.filter(c => lp[c.key] > 0);
     const colors = ['#1a1a18','#3a3a36','#5a5a54','#7a7a72','#9a9a90','#0F6E56','#185FA5','#854F0B','#A32D2D','#d4ede7','#c5d9f0'];
+    const total = costData.reduce((s, c) => s + lp[c.key], 0);
 
     if (chartCosts) chartCosts.destroy();
     chartCosts = new Chart(document.getElementById('chart-costs'), {
       type: 'doughnut',
       data: {
         labels: costData.map(c => c.label),
-        datasets: [{
-          data: costData.map(c => lp[c.key]),
-          backgroundColor: colors.slice(0, costData.length),
-          borderWidth: 1,
-          borderColor: '#fff'
-        }]
+        datasets: [{ data: costData.map(c => lp[c.key]), backgroundColor: colors.slice(0, costData.length), borderWidth: 1, borderColor: '#fff' }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: { display: true, position: 'right', labels: { font: { size: 10 }, color: '#555', boxWidth: 10, padding: 8 } },
-          tooltip: { callbacks: { label: ctx => ` ${ctx.label}: $${ctx.raw.toLocaleString()}` } }
+          tooltip: { callbacks: { label: ctx => ` ${ctx.label}: $${ctx.raw.toLocaleString()} (${(ctx.raw/total*100).toFixed(1)}%)` } },
+          datalabels: {
+            display: ctx => ctx.dataset.data[ctx.dataIndex] / total > 0.06,
+            color: '#fff',
+            font: { size: 9, weight: '600' },
+            formatter: (v) => (v/total*100).toFixed(0) + '%'
+          }
         }
       }
     });
@@ -1212,13 +1234,15 @@ function renderCharts() {
       },
       options: {
         ...chartDefaults,
+        layout: { padding: { top: 24 } },
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: ctx => ` Labor (wages + taxes): ${ctx.raw}% of revenue` } }
+          tooltip: { callbacks: { label: ctx => ` Labor: ${ctx.raw}% of revenue` } },
+          datalabels: dlLine
         },
         scales: {
           x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } },
-          y: { title: axisTitle('Labor as % of Revenue'), grid: { color: '#f0f0eb' }, ticks: { font: { size: 11 }, color: '#888', callback: v => v + '%' } }
+          y: { grid: { color: '#f0f0eb' }, ticks: { font: { size: 11 }, color: '#888', callback: v => v + '%' } }
         }
       }
     });
@@ -1241,54 +1265,97 @@ const PL_GROUPS = [
   { label: 'Profitability', keys: ['operatingIncome', 'otherIncome', 'netIncome'] }
 ];
 
+// Returns annualization multiplier for a partial period key, or null if not applicable
+function getAnnFactor(key) {
+  const qMatch = key.match(/^(\d{4})-Q(\d)$/);
+  if (qMatch) { const q = parseInt(qMatch[2]); return q < 4 ? 4 / q : null; }
+  const mMatch = key.match(/^(\d{4})-(\d{2})$/);
+  if (mMatch) { const m = parseInt(mMatch[2]); return m < 12 ? 12 / m : null; }
+  return null;
+}
+
+// Returns annualized label for a partial period key
+function annLabel(key) {
+  const qMatch = key.match(/^(\d{4})-Q(\d)$/);
+  if (qMatch) return `${qMatch[1]} Ann.`;
+  const mMatch = key.match(/^(\d{4})-(\d{2})$/);
+  if (mMatch) return `${mMatch[1]} Ann.`;
+  return key + ' Ann.';
+}
+
 function renderPLTable(view) {
-  const periods = getPeriodsForView(view);
+  const basePeriods = getPeriodsForView(view);
   const lineItems = deal.financials?.lineItems || [];
   const data = deal.financials?.periods || {};
-  const colCount = periods.length + 1;
 
   const thead = document.getElementById('pl-thead');
   const tbody = document.getElementById('pl-tbody');
 
-  if (periods.length === 0) {
+  if (basePeriods.length === 0) {
     thead.innerHTML = '';
     tbody.innerHTML = `<tr><td colspan="2" style="padding:20px;text-align:center;color:#aaa;font-style:italic;">No ${view} periods found in the data.</td></tr>`;
     return;
   }
 
-  // Header
-  const headerCells = periods.map(k => {
+  // Build column list: for each partial period, insert an annualized synthetic column after it
+  // Each column: { key, label, isActual, isPartial, isAnn, factor }
+  const columns = [];
+  for (const k of basePeriods) {
     const partial = isPartialPeriod(k);
-    return `<th>${formatPeriodHeader(k)}${partial ? '<span class="partial-label">(partial)</span>' : ''}</th>`;
-  }).join('');
-  thead.innerHTML = `<tr><th>Line Item</th>${headerCells}</tr>`;
+    const factor = partial ? getAnnFactor(k) : null;
+    columns.push({ key: k, label: formatPeriodHeader(k), isActual: !partial, isPartial: partial, isAnn: false, factor: null });
+    if (partial && factor) {
+      columns.push({ key: k, label: annLabel(k), isActual: false, isPartial: false, isAnn: true, factor });
+    }
+  }
 
-  // Build a lookup from key to lineItem
+  const colCount = columns.length + 1;
+
+  // ── Two-row thead ──────────────────────────────────────────────────────────
+  // Row 1: category spans (Actuals / Estimated)
+  const actualCols = columns.filter(c => c.isActual).length;
+  const estCols = columns.filter(c => !c.isActual).length;
+  let row1 = '<tr class="thead-category"><th></th>';
+  if (actualCols > 0) row1 += `<th colspan="${actualCols}" class="th-actuals">Actuals</th>`;
+  if (estCols > 0)    row1 += `<th colspan="${estCols}" class="th-estimated">Estimated</th>`;
+  row1 += '</tr>';
+
+  // Row 2: individual period labels
+  const row2Cells = columns.map(c => {
+    if (c.isPartial) return `<th>${c.label}<span class="partial-label">(partial)</span></th>`;
+    if (c.isAnn)     return `<th class="th-ann">${c.label}<span class="partial-label">annualized</span></th>`;
+    return `<th>${c.label}</th>`;
+  }).join('');
+  const row2 = `<tr><th>Line Item</th>${row2Cells}</tr>`;
+
+  thead.innerHTML = row1 + row2;
+
+  // ── Rows ──────────────────────────────────────────────────────────────────
   const itemByKey = Object.fromEntries(lineItems.map(i => [i.key, i]));
 
-  // Render rows grouped
+  function renderCell(col, item) {
+    const p = data[col.key] || {};
+    const rawVal = p[item.key];
+    const val = col.isAnn && rawVal != null ? rawVal * col.factor : rawVal;
+
+    if (val === null || val === undefined) return `<td class="cell-null">—</td>`;
+
+    const isNeg = val < 0;
+    const revenue = col.isAnn && p.revenue != null ? p.revenue * col.factor : p.revenue;
+    const showPct = item.type === 'expense' && revenue && revenue !== 0 && val !== 0;
+    const pct = showPct ? (val / revenue * 100).toFixed(1) + '%' : '';
+    const cls = [isNeg ? 'cell-neg' : '', col.isAnn ? 'cell-ann' : ''].filter(Boolean).join(' ');
+    return `<td class="${cls}">${fmt$(val)}${pct ? `<span class="pct-sub">${pct} rev</span>` : ''}</td>`;
+  }
+
   let rows = '';
   for (const group of PL_GROUPS) {
     const groupItems = group.keys.map(k => itemByKey[k]).filter(Boolean);
     if (!groupItems.length) continue;
-    // Group header row
     rows += `<tr class="row-group-header"><td colspan="${colCount}">${group.label}</td></tr>`;
     for (const item of groupItems) {
       const rowClass = item.type === 'total' ? 'row-total' : item.type === 'subtotal' ? 'row-subtotal' : '';
-      const cells = periods.map(period => {
-        const p = data[period] || {};
-        const val = p[item.key];
-        if (val === null || val === undefined) {
-          return `<td class="cell-null">—</td>`;
-        }
-        const isNeg = val < 0;
-        const revenue = p.revenue;
-        const showPct = item.type === 'expense' && revenue && revenue !== 0 && val !== 0;
-        const pct = showPct ? (val / revenue * 100).toFixed(1) + '%' : '';
-        const formatted = fmt$(val);
-        const cls = isNeg ? 'cell-neg' : '';
-        return `<td class="${cls}">${formatted}${pct ? `<span class="pct-sub">${pct} rev</span>` : ''}</td>`;
-      }).join('');
+      const cells = columns.map(col => renderCell(col, item)).join('');
       rows += `<tr class="${rowClass}"><td class="row-indent">${escHtml(item.label)}</td>${cells}</tr>`;
     }
   }
