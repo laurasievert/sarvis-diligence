@@ -2896,10 +2896,23 @@ async function runAnalysis() {
 
     statusEl.textContent = 'Sending to Claude…';
 
+    // Strip heavy fields (chatHistory, full checklist descriptions, stored documents)
+    // but keep a compact checklist summary so Claude can link docs to items
+    const dealContext = {
+      name: deal.name, entity: deal.entity, location: deal.location,
+      industry: deal.industry, status: deal.status,
+      summary: deal.summary,
+      financials: deal.financials ? { periods: deal.financials.periods } : undefined,
+      flags: deal.flags,
+      narratives: deal.narratives,
+      market: deal.market ? { description: deal.market.description, tam: deal.market.tam } : undefined,
+      checklistItems: (deal.diligenceChecklist || []).map(i => ({ id: i.id, item: i.item, category: i.category })),
+    };
+
     const resp = await fetch('/api/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ files, dealContext: deal })
+      body: JSON.stringify({ files, dealContext })
     });
 
     if (!resp.ok) {
@@ -3070,12 +3083,21 @@ function renderChat() {
     const typingEl = appendChatBubble('assistant', '…', true);
 
     try {
+      const chatContext = {
+        name: deal.name, entity: deal.entity, location: deal.location,
+        industry: deal.industry, status: deal.status,
+        summary: deal.summary,
+        financials: deal.financials ? { periods: deal.financials.periods } : undefined,
+        flags: deal.flags,
+        narratives: deal.narratives,
+        market: deal.market ? { description: deal.market.description, tam: deal.market.tam } : undefined,
+      };
       const resp = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           messages: deal.chatHistory,
-          dealContext: deal
+          dealContext: chatContext
         })
       });
 

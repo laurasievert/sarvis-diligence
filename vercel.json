@@ -4,8 +4,8 @@
     { "source": "/((?!api/)(?!deal\\.html$)(?!index\\.html$).*)", "destination": "/index.html" }
   ],
   "functions": {
-    "api/analyze.mjs": { "maxDuration": 60 },
-    "api/extract.mjs": { "maxDuration": 60 },
+    "api/analyze.mjs": { "maxDuration": 30 },
+    "api/extract.mjs": { "maxDuration": 30 },
     "api/chat.mjs":    { "maxDuration": 30 }
   }
 }
