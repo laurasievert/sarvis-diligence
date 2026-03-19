@@ -556,7 +556,23 @@ const DARLINGS_SEED = {
     description: "Warren County, PA. Median age 47.4, 23.7% age 65+, ~$54–81M regional TAM.",
     seniorCount: 30250,
     tam: "54M–81M",
-    competitorCount: "~3–6 licensed agencies"
+    competitorCount: "~3–6 licensed agencies",
+    coreCounty: "Warren County, PA",
+    counties: [
+      { name: "Warren County", core: true, distance: "—", population: 37400, medianAge: 47.4, seniors65: 8860, seniors65Pct: 23.7, workingAge: 21500, workingAgePct: 57.5 },
+      { name: "Forest County", core: false, distance: "~23 mi", population: 6450, medianAge: 49.6, seniors65: 1510, seniors65Pct: 23.4, workingAge: 3600, workingAgePct: 55.8 },
+      { name: "McKean County", core: false, distance: "~38 mi", population: 39500, medianAge: 43.8, seniors65: 7900, seniors65Pct: 20.0, workingAge: 24200, workingAgePct: 61.3 },
+      { name: "Venango County", core: false, distance: "~38 mi", population: 49500, medianAge: 47.0, seniors65: 11980, seniors65Pct: 24.2, workingAge: 28400, workingAgePct: 57.4 }
+    ],
+    marketDynamics: [
+      { type: "green", text: "<b>Structural demand.</b> Warren County's 23.7% age 65+ penetration is nearly 50% above the national average (~16%). The four-county region has ~30,000 seniors, growing consistently as the boomer cohort ages through." },
+      { type: "green", text: "<b>PA Medicaid support.</b> Community HealthChoices (CHC) and OLTL waiver programs fund home care statewide. Average CHC spend is ~$4,957/month per participant — a durable, recession-resistant payer." },
+      { type: "green", text: "<b>Thin competition.</b> Approximately 3–6 licensed home care agencies in Warren County. Low competitor density means lower referral acquisition cost and stickier census." },
+      { type: "amber", text: "<b>Declining total population.</b> Warren County has lost ~14% of total population since 2000. Long-run growth in the senior cohort is structural, but the overall market won't expand meaningfully." },
+      { type: "amber", text: "<b>Low-income market.</b> Median HHI ~$50,900 — ~67% of PA statewide median. Private-pay revenue opportunity is limited; Medicaid dependence is likely 85%+." },
+      { type: "red", text: "<b>Caregiver supply crisis.</b> Working-age population (18–64) is declining across all four counties. Rural PA DCW wages average $13–16/hr, with persistent vacancies. At 60–70% annualized turnover, this is the primary operational constraint on census growth." }
+    ],
+    dataNote: "Sources: U.S. Census Bureau ACS 2020–2023 estimates. Working-age = population 18–64."
   },
   documents: [],
   chatHistory: []

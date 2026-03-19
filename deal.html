@@ -254,6 +254,24 @@
   .pct-sub { font-size: 10px; color: #aaa; display: block; margin-top: 1px; }
   .partial-label { font-size: 10px; color: #aaa; display: block; font-weight: 400; margin-top: 1px; }
 
+  /* ─── Market tab ─── */
+  .market-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .market-chart-card { background: #fff; border: 0.5px solid #ddd; border-radius: 10px; padding: 16px; }
+  .market-table-wrap { overflow-x: auto; border: 0.5px solid #ddd; border-radius: 8px; }
+  .market-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  .market-table th { background: #f5f5f0; padding: 8px 10px; font-size: 11px; font-weight: 600; color: #555; border-bottom: 0.5px solid #ddd; text-align: left; }
+  .market-table th.num { text-align: right; }
+  .market-table td { padding: 7px 10px; border-bottom: 0.5px solid #f0f0eb; font-size: 12.5px; }
+  .market-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .market-table tr:last-child td { border-bottom: none; }
+  .market-table tr.row-total td { font-weight: 600; background: #f8f8f4; border-top: 0.5px solid #ddd; }
+  .market-flag { border-radius: 8px; padding: 8px 12px; margin-bottom: 6px; font-size: 12.5px; display: flex; gap: 8px; align-items: flex-start; line-height: 1.5; }
+  .market-flag.green { background: #EAF3DE; color: #27500A; }
+  .market-flag.amber { background: #FAEEDA; color: #633806; }
+  .market-flag.red   { background: #FCEBEB; color: #791F1F; }
+  .market-flag-icon { font-weight: 700; flex-shrink: 0; }
+  @media (max-width: 760px) { .market-two-col { grid-template-columns: 1fr; } }
+
   /* ─── Summary two-column ─── */
   .summary-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
   .summary-col-left .metric-grid { grid-template-columns: 1fr 1fr; }
@@ -570,6 +588,7 @@
   <div class="tab" data-tab="financials">Financials</div>
   <div class="tab" data-tab="diligence">Diligence</div>
   <div class="tab" data-tab="valuation">Valuation</div>
+  <div class="tab" data-tab="market">Market</div>
   <div class="tab" data-tab="documents">Documents</div>
   <div class="tab" data-tab="chat">Chat</div>
 </div>
@@ -706,6 +725,51 @@
             <tbody id="matrix-tbody"></tbody>
           </table>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Market Tab ────────────────────────────────────────────────────── -->
+  <div class="tab-panel" id="tab-market">
+    <div class="market-two-col">
+      <div>
+        <div class="section-title">Core Market</div>
+        <div class="metric-grid" id="market-core-metrics"></div>
+
+        <div class="section-title" style="margin-top:1.4rem">County Demographics</div>
+        <div class="market-table-wrap">
+          <table class="market-table" id="market-county-table">
+            <thead>
+              <tr>
+                <th>County</th>
+                <th class="num">Distance</th>
+                <th class="num">Population</th>
+                <th class="num">Median Age</th>
+                <th class="num">Age 65+</th>
+                <th class="num">65+ Share</th>
+              </tr>
+            </thead>
+            <tbody id="market-county-tbody"></tbody>
+          </table>
+        </div>
+        <div style="font-size:11px;color:#aaa;margin-top:6px" id="market-data-note"></div>
+
+        <div class="section-title" style="margin-top:1.4rem">Market Sizing</div>
+        <div class="metric-grid" id="market-sizing-metrics"></div>
+      </div>
+      <div>
+        <div class="section-title">Age 65+ — Regional Comparison</div>
+        <div class="market-chart-card">
+          <div style="position:relative;height:260px"><canvas id="chart-age"></canvas></div>
+        </div>
+
+        <div class="section-title" style="margin-top:1.4rem">Caregiver Supply Risk</div>
+        <div class="market-chart-card">
+          <div style="position:relative;height:220px"><canvas id="chart-workforce"></canvas></div>
+        </div>
+
+        <div class="section-title" style="margin-top:1.4rem">Market Dynamics</div>
+        <div id="market-flags"></div>
       </div>
     </div>
   </div>
@@ -870,10 +934,13 @@ function initDeal() {
   renderDocuments();
   renderChat();
 
-  // Financials renders on first switch (lazy, for charts)
-  let finInit = false;
+  // Lazy chart tabs
+  let finInit = false, marketInit = false;
   document.querySelector('[data-tab="financials"]').addEventListener('click', () => {
     if (!finInit) { renderFinancials(); finInit = true; }
+  });
+  document.querySelector('[data-tab="market"]').addEventListener('click', () => {
+    if (!marketInit) { renderMarket(); marketInit = true; }
   });
 }
 
@@ -1396,6 +1463,152 @@ function renderPLTable(view) {
     }
   }
   tbody.innerHTML = rows;
+}
+
+// ─── Market tab ────────────────────────────────────────────────────────────────
+let chartAge, chartWorkforce;
+
+function renderMarket() {
+  const m = deal.market || {};
+  const counties = m.counties || [];
+  const core = counties.find(c => c.core) || counties[0];
+
+  // ── Core metrics ──
+  const coreMetrics = document.getElementById('market-core-metrics');
+  if (coreMetrics && core) {
+    coreMetrics.innerHTML = [
+      { label: 'County population', val: core.population ? '~' + (core.population/1000).toFixed(0) + 'K' : '—', sub: 'Declining ~0.8%/yr' },
+      { label: 'Median age', val: core.medianAge ?? '—', sub: `vs. PA avg of 40.9` },
+      { label: 'Age 65+ share', val: core.seniors65Pct ? core.seniors65Pct + '%' : '—', sub: core.seniors65 ? `~${core.seniors65.toLocaleString()} seniors` : '' },
+      { label: 'Working-age (18–64)', val: core.workingAgePct ? core.workingAgePct + '%' : '—', sub: core.workingAge ? `~${core.workingAge.toLocaleString()} people` : '' }
+    ].map(m => `<div class="card"><div class="metric-label">${m.label}</div><div class="metric-value">${m.val}</div><div class="metric-sub">${m.sub}</div></div>`).join('');
+  }
+
+  // ── County table ──
+  const tbody = document.getElementById('market-county-tbody');
+  if (tbody && counties.length) {
+    const total = { population: 0, seniors65: 0, workingAge: 0 };
+    let rows = counties.map(c => {
+      total.population += c.population || 0;
+      total.seniors65 += c.seniors65 || 0;
+      total.workingAge += c.workingAge || 0;
+      const bold = c.core ? ' style="font-weight:600"' : '';
+      return `<tr${bold}>
+        <td>${c.name}${c.core ? ' <span style="font-size:10px;color:#888">(core)</span>' : ''}</td>
+        <td class="num">${c.distance || '—'}</td>
+        <td class="num">${c.population ? '~' + c.population.toLocaleString() : '—'}</td>
+        <td class="num">${c.medianAge ?? '—'}</td>
+        <td class="num">${c.seniors65 ? '~' + c.seniors65.toLocaleString() : '—'}</td>
+        <td class="num">${c.seniors65Pct ? c.seniors65Pct + '%' : '—'}</td>
+      </tr>`;
+    }).join('');
+    rows += `<tr class="row-total">
+      <td>Total region</td><td class="num">—</td>
+      <td class="num">~${total.population.toLocaleString()}</td><td class="num">—</td>
+      <td class="num">~${total.seniors65.toLocaleString()}</td>
+      <td class="num">${total.population ? (total.seniors65/total.population*100).toFixed(1) + '%' : '—'}</td>
+    </tr>`;
+    tbody.innerHTML = rows;
+  }
+
+  if (m.dataNote) document.getElementById('market-data-note').textContent = m.dataNote;
+
+  // ── Market sizing ──
+  const sizingEl = document.getElementById('market-sizing-metrics');
+  if (sizingEl) {
+    const totalSeniors = counties.reduce((s, c) => s + (c.seniors65 || 0), 0);
+    const low = Math.round(totalSeniors * 0.10), high = Math.round(totalSeniors * 0.15);
+    sizingEl.innerHTML = [
+      { label: 'Seniors 65+ in region', val: totalSeniors ? '~' + totalSeniors.toLocaleString() : (m.seniorCount ? '~' + m.seniorCount.toLocaleString() : '—'), sub: '≤45 mi radius' },
+      { label: 'Est. needing home care', val: `${(low/1000).toFixed(1)}K–${(high/1000).toFixed(1)}K`, sub: '10–15% penetration' },
+      { label: 'Regional TAM', val: m.tam ? '$' + m.tam : '—', sub: 'At $1,500/mo avg' },
+      { label: 'Est. market share', val: deal.summary?.revenueLatestYear && m.tam ? '~2–3%' : '—', sub: 'Based on $1.82M rev' }
+    ].map(item => `<div class="card"><div class="metric-label">${item.label}</div><div class="metric-value">${item.val}</div><div class="metric-sub">${item.sub}</div></div>`).join('');
+  }
+
+  // ── Age chart ──
+  if (counties.length) {
+    const sorted = [...counties].sort((a, b) => (b.seniors65Pct || 0) - (a.seniors65Pct || 0));
+    const natAvg = { name: 'U.S. National', seniors65Pct: 16.0 };
+    const pa = { name: 'Pennsylvania', seniors65Pct: 19.0 };
+    const allBars = [...sorted, pa, natAvg];
+
+    if (chartAge) chartAge.destroy();
+    chartAge = new Chart(document.getElementById('chart-age'), {
+      type: 'bar',
+      data: {
+        labels: allBars.map(c => c.name),
+        datasets: [{
+          data: allBars.map(c => c.seniors65Pct),
+          backgroundColor: allBars.map(c => c.name === 'U.S. National' ? '#ccc' : c.name === 'Pennsylvania' ? '#aaa' : '#185FA5'),
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        layout: { padding: { right: 32 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.raw}% age 65+` } },
+          datalabels: { display: true, anchor: 'end', align: 'end', offset: 4, font: { size: 10, weight: '500' }, color: '#555', formatter: v => v + '%' }
+        },
+        scales: {
+          x: { grid: { color: '#f0f0eb' }, ticks: { font: { size: 10 }, color: '#888', callback: v => v + '%' }, max: 30 },
+          y: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#444' } }
+        }
+      }
+    });
+  }
+
+  // ── Workforce chart ──
+  if (counties.length) {
+    if (chartWorkforce) chartWorkforce.destroy();
+    chartWorkforce = new Chart(document.getElementById('chart-workforce'), {
+      type: 'bar',
+      data: {
+        labels: counties.map(c => c.name.replace(' County', '')),
+        datasets: [
+          {
+            label: 'Age 65+ (demand)',
+            data: counties.map(c => c.seniors65 || 0),
+            backgroundColor: '#185FA5',
+            borderRadius: 4
+          },
+          {
+            label: 'Working-age 18–64 (supply)',
+            data: counties.map(c => c.workingAge || 0),
+            backgroundColor: '#d4ede7',
+            borderColor: '#0F6E56',
+            borderWidth: 1.5,
+            borderRadius: 4
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        layout: { padding: { top: 20 } },
+        plugins: {
+          legend: { display: true, labels: { font: { size: 10 }, color: '#555', boxWidth: 10, padding: 10 } },
+          tooltip: { mode: 'index', callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.raw.toLocaleString()}` } },
+          datalabels: { display: false }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11 }, color: '#888' } },
+          y: { grid: { color: '#f0f0eb' }, ticks: { font: { size: 10 }, color: '#888', callback: v => (v/1000).toFixed(0) + 'K' } }
+        }
+      }
+    });
+  }
+
+  // ── Market dynamics flags ──
+  const flagsEl = document.getElementById('market-flags');
+  if (flagsEl && m.marketDynamics?.length) {
+    const icons = { green: '✓', amber: '!', red: '✕' };
+    flagsEl.innerHTML = m.marketDynamics.map(f =>
+      `<div class="market-flag ${f.type}"><span class="market-flag-icon">${icons[f.type] || '·'}</span><span>${f.text}</span></div>`
+    ).join('');
+  }
 }
 
 // ─── Diligence tab ─────────────────────────────────────────────────────────────
