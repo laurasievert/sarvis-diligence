@@ -437,7 +437,7 @@
 // ─── Storage helpers ───────────────────────────────────────────────────────────
 const DEALS_KEY = 'sarvis_deals';
 const INIT_KEY = 'sarvis_initialized';
-const SEED_VERSION = 3; // bump to patch existing Darling's deal with new fields
+const SEED_VERSION = 4; // bump to patch existing Darling's deal with new fields
 
 function getDeals() {
   try { return JSON.parse(localStorage.getItem(DEALS_KEY) || '[]'); } catch { return []; }
@@ -576,7 +576,41 @@ const DARLINGS_SEED = {
     dataNote: "Sources: U.S. Census Bureau ACS 2020–2023 estimates. Working-age = population 18–64."
   },
   documents: [],
-  chatHistory: []
+  chatHistory: [],
+  openQuestions: [],
+  diligenceChecklist: [
+    {"id":"1.01","category":"Corporate","item":"Entity formation documents","description":"Please provide Articles of Incorporation (or Organization) and any amendments.","status":"outstanding","notes":"","questions":[]},
+    {"id":"1.02","category":"Corporate","item":"Ownership / Cap Table","description":"Who are the current shareholders or members, and what % does each own? Please include a copy of the stock ledger or ownership schedule.","status":"outstanding","notes":"","questions":[]},
+    {"id":"1.03","category":"Corporate","item":"Good standing certificate","description":"Please provide a current certificate of good standing from your state.","status":"outstanding","notes":"","questions":[]},
+    {"id":"1.04","category":"Corporate","item":"Organizational chart","description":"Please provide a simple chart showing management and reporting structure.","status":"outstanding","notes":"","questions":[]},
+    {"id":"2.01","category":"Licensing / Regulatory","item":"Medicare and state licenses","description":"Please upload copies of all current operating licenses (state + Medicare).","status":"outstanding","notes":"","questions":[]},
+    {"id":"2.02","category":"Licensing / Regulatory","item":"Accreditation certificates","description":"Are you accredited (e.g., CHAP, ACHC, Joint Commission)? Please attach most recent certificate.","status":"outstanding","notes":"","questions":[]},
+    {"id":"2.03","category":"Licensing / Regulatory","item":"Survey reports","description":"Please provide the most recent 5 years of state or accreditation surveys and any Plans of Correction.","status":"outstanding","notes":"","questions":[]},
+    {"id":"2.04","category":"Licensing / Regulatory","item":"Audits / Repayments","description":"Have you had any Medicare, Medicaid, or payer audits in the past 3 years? If yes, please describe and attach correspondence.","status":"outstanding","notes":"","questions":[]},
+    {"id":"2.05","category":"Licensing / Regulatory","item":"OIG / SAM status","description":"Please confirm that no owners, officers, or staff are listed on the OIG Exclusion or SAM.gov databases.","status":"outstanding","notes":"","questions":[]},
+    {"id":"3.01","category":"Financial","item":"Financial statements","description":"Please upload full-year financial statements (P&L, Balance Sheet, Cash Flow) for the past 3 years and current YTD.","status":"received","notes":"2024 and 2025 P&L statements provided via QuickBooks export (cash basis). 2026 YTD through March 14 also provided. Balance sheet and cash flow not yet received.","questions":[]},
+    {"id":"3.02","category":"Financial","item":"Tax returns","description":"Please upload business tax returns (federal and state) for the past 3 years.","status":"outstanding","notes":"","questions":[]},
+    {"id":"3.03","category":"Financial","item":"AR aging","description":"Please provide an accounts receivable aging report as of the most recent month-end.","status":"outstanding","notes":"","questions":[]},
+    {"id":"3.04","category":"Financial","item":"Payer mix","description":"What % of revenue comes from Medicare, Medicaid, Private Pay, or other payers? Please include a summary.","status":"outstanding","notes":"All revenue appears as a single non-taxable sales line — consistent with Medicaid waiver billing but payer breakdown not confirmed. MCO vs. fee-for-service split unknown.","questions":["Which MCO(s) does the agency contract with — UPMC Health Plan, Highmark Wholecare, PA Health & Wellness?","What % of revenue is Community HealthChoices vs. OBRA waiver vs. private pay?"]},
+    {"id":"3.05","category":"Financial","item":"Debt or loans","description":"Please list all outstanding debt, lenders, and balances. Attach any loan or security agreements.","status":"outstanding","notes":"Interest expense jumped from $4.4K (2024) to $21.2K (2025), suggesting new debt was taken on. Schedule not yet provided.","questions":["What is the outstanding loan balance, interest rate, and maturity date?","Does the debt transfer at close or get paid off from proceeds?"]},
+    {"id":"3.06","category":"Financial","item":"Major expenses","description":"Please describe any one-time or nonrecurring expenses in the past 12 months.","status":"received","notes":"2024 P&L shows $34.7K gain on asset sale — a one-time item that turned operating loss into nominal net income. Confirmed non-recurring based on absence in 2025.","questions":[]},
+    {"id":"4.01","category":"Legal / Insurance","item":"Material contracts","description":"Please provide copies of key contracts: leases, referral agreements, billing, EHR vendors, or management services.","status":"outstanding","notes":"","questions":["Is the EVV platform contract transferable to a new owner?","Are there any referral agreements with UPMC Hamot or AHN that require notification at change of ownership?"]},
+    {"id":"4.02","category":"Legal / Insurance","item":"Insurance policies","description":"Please upload your current insurance certificates (general liability, workers' comp, professional liability).","status":"outstanding","notes":"","questions":[]},
+    {"id":"4.03","category":"Legal / Insurance","item":"Litigation / Claims","description":"Are there any pending lawsuits, employee claims, or regulatory complaints? If yes, please describe.","status":"outstanding","notes":"","questions":[]},
+    {"id":"4.04","category":"Legal / Insurance","item":"Liens or collateral","description":"Do you have any active UCC filings or liens against company assets?","status":"outstanding","notes":"","questions":[]},
+    {"id":"5.01","category":"HR / Payroll","item":"Employee roster","description":"Please provide an employee roster with role, start date, FTE status, and annual compensation.","status":"outstanding","notes":"","questions":[]},
+    {"id":"5.02","category":"HR / Payroll","item":"Key employees","description":"Who are your key management or clinical leaders (Administrator, DON, etc.)? How long have they been with the agency?","status":"outstanding","notes":"","questions":[]},
+    {"id":"5.03","category":"HR / Payroll","item":"Payroll summary","description":"Please provide payroll reports for the last 12 months (can redact SSNs).","status":"outstanding","notes":"","questions":[]},
+    {"id":"5.04","category":"HR / Payroll","item":"Contractors","description":"Do you use any 1099 caregivers or contractors? If so, please describe their roles and number.","status":"outstanding","notes":"","questions":[]},
+    {"id":"5.05","category":"HR / Payroll","item":"Benefits overview","description":"Please describe employee benefits offered (health, PTO, 401k, etc.).","status":"outstanding","notes":"","questions":[]},
+    {"id":"6.01","category":"Operations","item":"EHR / Software","description":"What EHR, scheduling, and billing systems do you use? Please list vendors and contract terms.","status":"outstanding","notes":"Software/IT runs $118–132K/year (6–8% of revenue) — unusually high for this size. Likely includes EVV platform, scheduling software, and billing clearinghouse.","questions":["What is the EVV vendor (HHAeXchange, ClearCare, etc.)?","Are all software contracts month-to-month or multi-year?"]},
+    {"id":"6.02","category":"Operations","item":"Referral sources","description":"Who are your top 10 referral sources (by volume)?","status":"outstanding","notes":"","questions":[]},
+    {"id":"6.03","category":"Operations","item":"Policies & Procedures","description":"Please upload your policies manual or compliance handbook (CMS Conditions of Participation).","status":"outstanding","notes":"","questions":[]},
+    {"id":"6.04","category":"Operations","item":"Quality improvement (QI/QA)","description":"Please share the last 12 months of QI or QA meeting minutes or summaries.","status":"outstanding","notes":"","questions":[]},
+    {"id":"7.01","category":"Misc","item":"Office leases","description":"Please attach copies of current office lease(s) with term and renewal details.","status":"outstanding","notes":"Rent dropped from $29.9K (2024) to $322 (2025) to $0 (2026 YTD). Agency may be operating from owner's personal property — creates real post-acquisition occupancy cost.","questions":["Where is the licensed office currently located?","Is the owner willing to include a lease of the current space in the transaction?"]},
+    {"id":"7.02","category":"Misc","item":"Vehicles or equipment","description":"Please list any owned or leased vehicles or durable medical equipment.","status":"outstanding","notes":"","questions":[]},
+    {"id":"7.03","category":"Misc","item":"IT vendors","description":"Please provide a list of major IT or data vendors with Business Associate Agreements (BAAs).","status":"outstanding","notes":"","questions":[]}
+  ]
 };
 
 // ─── Initialize ────────────────────────────────────────────────────────────────
@@ -599,6 +633,11 @@ function init() {
           valuation: d.valuation || DARLINGS_SEED.valuation,
           chatHistory: d.chatHistory || [],
           documents: d.documents || [],
+          openQuestions: d.openQuestions || [],
+          // Only seed checklist if user hasn't made edits (i.e. it doesn't exist yet)
+          diligenceChecklist: d.diligenceChecklist && d.diligenceChecklist.length
+            ? d.diligenceChecklist
+            : DARLINGS_SEED.diligenceChecklist,
         };
       });
       saveDeals(patched);
@@ -843,7 +882,41 @@ async function createDeal(skipDocs) {
     valuation: { baseNetIncome: 0, interestAddback: 0, ownerWagesAddback: 0, carAddback: 0, otherAddback: 0, replacementSalary: 0, normalizedRent: 0, debt: 0 },
     market: { description: '', seniorCount: null, tam: null, competitorCount: null },
     documents: [],
-    chatHistory: []
+    chatHistory: [],
+    openQuestions: [],
+    diligenceChecklist: [
+      {"id":"1.01","category":"Corporate","item":"Entity formation documents","description":"Please provide Articles of Incorporation (or Organization) and any amendments.","status":"outstanding","notes":"","questions":[]},
+      {"id":"1.02","category":"Corporate","item":"Ownership / Cap Table","description":"Who are the current shareholders or members, and what % does each own? Please include a copy of the stock ledger or ownership schedule.","status":"outstanding","notes":"","questions":[]},
+      {"id":"1.03","category":"Corporate","item":"Good standing certificate","description":"Please provide a current certificate of good standing from your state.","status":"outstanding","notes":"","questions":[]},
+      {"id":"1.04","category":"Corporate","item":"Organizational chart","description":"Please provide a simple chart showing management and reporting structure.","status":"outstanding","notes":"","questions":[]},
+      {"id":"2.01","category":"Licensing / Regulatory","item":"Medicare and state licenses","description":"Please upload copies of all current operating licenses (state + Medicare).","status":"outstanding","notes":"","questions":[]},
+      {"id":"2.02","category":"Licensing / Regulatory","item":"Accreditation certificates","description":"Are you accredited (e.g., CHAP, ACHC, Joint Commission)? Please attach most recent certificate.","status":"outstanding","notes":"","questions":[]},
+      {"id":"2.03","category":"Licensing / Regulatory","item":"Survey reports","description":"Please provide the most recent 5 years of state or accreditation surveys and any Plans of Correction.","status":"outstanding","notes":"","questions":[]},
+      {"id":"2.04","category":"Licensing / Regulatory","item":"Audits / Repayments","description":"Have you had any Medicare, Medicaid, or payer audits in the past 3 years? If yes, please describe and attach correspondence.","status":"outstanding","notes":"","questions":[]},
+      {"id":"2.05","category":"Licensing / Regulatory","item":"OIG / SAM status","description":"Please confirm that no owners, officers, or staff are listed on the OIG Exclusion or SAM.gov databases.","status":"outstanding","notes":"","questions":[]},
+      {"id":"3.01","category":"Financial","item":"Financial statements","description":"Please upload full-year financial statements (P&L, Balance Sheet, Cash Flow) for the past 3 years and current YTD.","status":"outstanding","notes":"","questions":[]},
+      {"id":"3.02","category":"Financial","item":"Tax returns","description":"Please upload business tax returns (federal and state) for the past 3 years.","status":"outstanding","notes":"","questions":[]},
+      {"id":"3.03","category":"Financial","item":"AR aging","description":"Please provide an accounts receivable aging report as of the most recent month-end.","status":"outstanding","notes":"","questions":[]},
+      {"id":"3.04","category":"Financial","item":"Payer mix","description":"What % of revenue comes from Medicare, Medicaid, Private Pay, or other payers? Please include a summary.","status":"outstanding","notes":"","questions":[]},
+      {"id":"3.05","category":"Financial","item":"Debt or loans","description":"Please list all outstanding debt, lenders, and balances. Attach any loan or security agreements.","status":"outstanding","notes":"","questions":[]},
+      {"id":"3.06","category":"Financial","item":"Major expenses","description":"Please describe any one-time or nonrecurring expenses in the past 12 months.","status":"outstanding","notes":"","questions":[]},
+      {"id":"4.01","category":"Legal / Insurance","item":"Material contracts","description":"Please provide copies of key contracts: leases, referral agreements, billing, EHR vendors, or management services.","status":"outstanding","notes":"","questions":[]},
+      {"id":"4.02","category":"Legal / Insurance","item":"Insurance policies","description":"Please upload your current insurance certificates (general liability, workers' comp, professional liability).","status":"outstanding","notes":"","questions":[]},
+      {"id":"4.03","category":"Legal / Insurance","item":"Litigation / Claims","description":"Are there any pending lawsuits, employee claims, or regulatory complaints? If yes, please describe.","status":"outstanding","notes":"","questions":[]},
+      {"id":"4.04","category":"Legal / Insurance","item":"Liens or collateral","description":"Do you have any active UCC filings or liens against company assets?","status":"outstanding","notes":"","questions":[]},
+      {"id":"5.01","category":"HR / Payroll","item":"Employee roster","description":"Please provide an employee roster with role, start date, FTE status, and annual compensation.","status":"outstanding","notes":"","questions":[]},
+      {"id":"5.02","category":"HR / Payroll","item":"Key employees","description":"Who are your key management or clinical leaders (Administrator, DON, etc.)? How long have they been with the agency?","status":"outstanding","notes":"","questions":[]},
+      {"id":"5.03","category":"HR / Payroll","item":"Payroll summary","description":"Please provide payroll reports for the last 12 months (can redact SSNs).","status":"outstanding","notes":"","questions":[]},
+      {"id":"5.04","category":"HR / Payroll","item":"Contractors","description":"Do you use any 1099 caregivers or contractors? If so, please describe their roles and number.","status":"outstanding","notes":"","questions":[]},
+      {"id":"5.05","category":"HR / Payroll","item":"Benefits overview","description":"Please describe employee benefits offered (health, PTO, 401k, etc.).","status":"outstanding","notes":"","questions":[]},
+      {"id":"6.01","category":"Operations","item":"EHR / Software","description":"What EHR, scheduling, and billing systems do you use? Please list vendors and contract terms.","status":"outstanding","notes":"","questions":[]},
+      {"id":"6.02","category":"Operations","item":"Referral sources","description":"Who are your top 10 referral sources (by volume)?","status":"outstanding","notes":"","questions":[]},
+      {"id":"6.03","category":"Operations","item":"Policies & Procedures","description":"Please upload your policies manual or compliance handbook (CMS Conditions of Participation).","status":"outstanding","notes":"","questions":[]},
+      {"id":"6.04","category":"Operations","item":"Quality improvement (QI/QA)","description":"Please share the last 12 months of QI or QA meeting minutes or summaries.","status":"outstanding","notes":"","questions":[]},
+      {"id":"7.01","category":"Misc","item":"Office leases","description":"Please attach copies of current office lease(s) with term and renewal details.","status":"outstanding","notes":"","questions":[]},
+      {"id":"7.02","category":"Misc","item":"Vehicles or equipment","description":"Please list any owned or leased vehicles or durable medical equipment.","status":"outstanding","notes":"","questions":[]},
+      {"id":"7.03","category":"Misc","item":"IT vendors","description":"Please provide a list of major IT or data vendors with Business Associate Agreements (BAAs).","status":"outstanding","notes":"","questions":[]}
+    ]
   };
 
   // If we have files, call extract

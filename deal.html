@@ -561,6 +561,368 @@
   }
   .status-bar.error { color: #A32D2D; }
   .status-bar.success { color: #0F6E56; }
+
+  /* ─── Diligence checklist ─── */
+  .dl-progress-wrap {
+    background: #fff;
+    border: 0.5px solid #ddd;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+  }
+  .dl-progress-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .dl-progress-label {
+    font-size: 13px;
+    color: #444;
+    font-weight: 500;
+  }
+  .dl-progress-badges {
+    display: flex;
+    gap: 6px;
+  }
+  .dl-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+  .dl-badge-outstanding { background: #f0f0eb; color: #888; }
+  .dl-badge-received { background: #d6e8f7; color: #185FA5; }
+  .dl-badge-addressed { background: #d4ede7; color: #0F6E56; }
+  .dl-progress-bar-bg {
+    height: 6px;
+    background: #eee;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .dl-progress-bar-fill {
+    height: 100%;
+    background: #0F6E56;
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  .dl-category {
+    margin-bottom: 14px;
+  }
+  .dl-category-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0 6px;
+    border-bottom: 0.5px solid #e0e0da;
+    margin-bottom: 4px;
+  }
+  .dl-category-name {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #555;
+  }
+  .dl-category-count {
+    font-size: 11px;
+    color: #aaa;
+    margin-left: auto;
+  }
+
+  .dl-item {
+    border: 0.5px solid transparent;
+    border-radius: 7px;
+    margin-bottom: 2px;
+    transition: background 0.12s, border-color 0.12s;
+    overflow: hidden;
+  }
+  .dl-item:hover { background: #fafaf8; border-color: #e8e8e4; }
+  .dl-item.expanded { background: #fafaf8; border-color: #d0d0ca; }
+
+  .dl-item-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 7px 8px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .dl-status-btn {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border: none;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    margin-top: 1px;
+    border-radius: 3px;
+    transition: background 0.12s;
+  }
+  .dl-status-btn:hover { background: rgba(0,0,0,0.06); }
+  .dl-status-btn[data-status="outstanding"] { color: #bbb; }
+  .dl-status-btn[data-status="received"] { color: #185FA5; }
+  .dl-status-btn[data-status="addressed"] { color: #0F6E56; }
+
+  .dl-item-main {
+    flex: 1;
+    min-width: 0;
+  }
+  .dl-item-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1a1a18;
+    line-height: 1.3;
+  }
+  .dl-item-notes-preview {
+    font-size: 12px;
+    color: #666;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .dl-item-questions-preview {
+    font-size: 12px;
+    color: #185FA5;
+    margin-top: 2px;
+  }
+  .dl-item-id {
+    font-size: 10px;
+    color: #bbb;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .dl-item-expanded {
+    display: none;
+    padding: 0 8px 10px 36px;
+    border-top: 0.5px solid #eee;
+  }
+  .dl-item.expanded .dl-item-expanded { display: block; }
+
+  .dl-description {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.5;
+    margin: 8px 0 6px;
+    padding: 8px 10px;
+    background: #f5f5f0;
+    border-radius: 5px;
+  }
+  .dl-field-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #999;
+    margin: 8px 0 3px;
+  }
+  .dl-notes-area {
+    width: 100%;
+    padding: 7px 9px;
+    border: 0.5px solid #ddd;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: inherit;
+    color: #1a1a18;
+    background: #fff;
+    outline: none;
+    resize: vertical;
+    min-height: 58px;
+    transition: border-color 0.15s;
+    line-height: 1.5;
+  }
+  .dl-notes-area:focus { border-color: #1a1a18; }
+
+  .dl-questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+  .dl-question-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .dl-question-num {
+    font-size: 11px;
+    color: #888;
+    flex-shrink: 0;
+    margin-top: 3px;
+    min-width: 16px;
+  }
+  .dl-question-text {
+    flex: 1;
+    font-size: 12px;
+    color: #1a1a18;
+    line-height: 1.45;
+    padding: 4px 7px;
+    background: #fff;
+    border: 0.5px solid #e0e0da;
+    border-radius: 5px;
+    cursor: text;
+    outline: none;
+    min-width: 0;
+  }
+  .dl-question-text:focus { border-color: #185FA5; }
+  .dl-question-del {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #bbb;
+    font-size: 14px;
+    padding: 2px 4px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+    border-radius: 3px;
+  }
+  .dl-question-del:hover { color: #A32D2D; background: #fdf2f2; }
+
+  .dl-add-question-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: #185FA5;
+    padding: 2px 0;
+    text-decoration: underline;
+    font-family: inherit;
+  }
+  .dl-add-question-btn:hover { color: #0d4a85; }
+
+  /* ─── Open Questions section ─── */
+  .dl-open-questions {
+    background: #fff;
+    border: 0.5px solid #ddd;
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-top: 18px;
+  }
+  .dl-open-questions-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .dl-open-questions-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1a18;
+  }
+  .dl-oq-count {
+    font-size: 11px;
+    color: #888;
+  }
+  .dl-oq-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 0.5px solid #f0f0eb;
+    transition: opacity 0.2s;
+  }
+  .dl-oq-item:last-of-type { border-bottom: none; }
+  .dl-oq-item.resolved .dl-oq-text { text-decoration: line-through; color: #aaa; }
+  .dl-oq-item.resolved { opacity: 0.5; }
+  .dl-oq-context {
+    font-size: 10px;
+    color: #aaa;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    min-width: 90px;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .dl-oq-text {
+    flex: 1;
+    font-size: 12.5px;
+    color: #1a1a18;
+    line-height: 1.45;
+  }
+  .dl-oq-resolve-btn {
+    background: none;
+    border: 0.5px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 11px;
+    color: #888;
+    padding: 2px 7px;
+    flex-shrink: 0;
+    transition: background 0.12s, color 0.12s;
+    font-family: inherit;
+  }
+  .dl-oq-resolve-btn:hover { background: #d4ede7; color: #0F6E56; border-color: #0F6E56; }
+  .dl-oq-item.resolved .dl-oq-resolve-btn { color: #aaa; }
+
+  .dl-oq-add-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 0.5px solid #eee;
+  }
+  .dl-oq-input {
+    flex: 1;
+    padding: 7px 10px;
+    border: 0.5px solid #ddd;
+    border-radius: 6px;
+    font-size: 12.5px;
+    font-family: inherit;
+    color: #1a1a18;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .dl-oq-input:focus { border-color: #1a1a18; }
+  .dl-oq-add-btn {
+    padding: 7px 14px;
+    border-radius: 6px;
+    background: #1a1a18;
+    color: #fff;
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+  }
+  .dl-oq-add-btn:hover { opacity: 0.85; }
+
+  /* ─── Key Flags toggle inside diligence ─── */
+  .dl-flags-toggle-wrap {
+    margin-top: 18px;
+  }
+  .dl-flags-toggle-btn {
+    background: none;
+    border: 0.5px solid #ddd;
+    border-radius: 7px;
+    padding: 7px 14px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.12s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dl-flags-toggle-btn:hover { background: #f5f5f0; }
+  .dl-flags-inner { display: none; margin-top: 12px; }
+  .dl-flags-inner.open { display: block; }
 </style>
 </head>
 <body>
@@ -665,7 +1027,15 @@
 
   <!-- ── Diligence Tab ───────────────────────────────────────────────────── -->
   <div class="tab-panel" id="tab-diligence">
-    <div id="flags-container"></div>
+    <div id="dl-progress-wrap" class="dl-progress-wrap"></div>
+    <div id="dl-checklist"></div>
+    <div id="dl-open-questions" class="dl-open-questions"></div>
+    <div class="dl-flags-toggle-wrap">
+      <button class="dl-flags-toggle-btn" id="dl-flags-toggle-btn">▶ Show Key Flags</button>
+      <div class="dl-flags-inner" id="dl-flags-inner">
+        <div id="flags-container"></div>
+      </div>
+    </div>
   </div>
 
   <!-- ── Valuation Tab ──────────────────────────────────────────────────── -->
@@ -915,7 +1285,9 @@ function initDeal() {
   const metaParts = [deal.entity, deal.location].filter(Boolean);
   let metaHTML = metaParts.map(p => escHtml(p)).join(' · ');
   if (deal.website) {
-    metaHTML += ` · <a href="${escHtml(deal.website)}" target="_blank" rel="noopener" style="color:#185FA5;text-decoration:none;">${escHtml(deal.website.replace(/^https?:\/\//, ''))}</a>`;
+    const safeHref = deal.website.replace(/"/g, '%22');
+    const displayUrl = escHtml(deal.website.replace(/^https?:\/\//, ''));
+    metaHTML += ` · <a href="${safeHref}" target="_blank" rel="noopener" style="color:#185FA5;text-decoration:none;">${displayUrl}</a>`;
   }
   document.getElementById('header-meta').innerHTML = metaHTML;
 
@@ -929,7 +1301,7 @@ function initDeal() {
 
   // Init all tabs
   renderSummary();
-  renderFlags();
+  renderDiligence();
   renderValuation();
   renderDocuments();
   renderChat();
@@ -941,6 +1313,14 @@ function initDeal() {
   });
   document.querySelector('[data-tab="market"]').addEventListener('click', () => {
     if (!marketInit) { renderMarket(); marketInit = true; }
+  });
+
+  // Flags toggle inside diligence tab
+  document.getElementById('dl-flags-toggle-btn').addEventListener('click', () => {
+    const inner = document.getElementById('dl-flags-inner');
+    const btn = document.getElementById('dl-flags-toggle-btn');
+    const isOpen = inner.classList.toggle('open');
+    btn.textContent = (isOpen ? '▼ Hide Key Flags' : '▶ Show Key Flags');
   });
 }
 
@@ -1624,6 +2004,41 @@ function renderMarket() {
   }
 }
 
+// ─── Default checklist items ────────────────────────────────────────────────────
+const DEFAULT_CHECKLIST = [
+  {"id":"1.01","category":"Corporate","item":"Entity formation documents","description":"Please provide Articles of Incorporation (or Organization) and any amendments.","status":"outstanding","notes":"","questions":[]},
+  {"id":"1.02","category":"Corporate","item":"Ownership / Cap Table","description":"Who are the current shareholders or members, and what % does each own? Please include a copy of the stock ledger or ownership schedule.","status":"outstanding","notes":"","questions":[]},
+  {"id":"1.03","category":"Corporate","item":"Good standing certificate","description":"Please provide a current certificate of good standing from your state.","status":"outstanding","notes":"","questions":[]},
+  {"id":"1.04","category":"Corporate","item":"Organizational chart","description":"Please provide a simple chart showing management and reporting structure.","status":"outstanding","notes":"","questions":[]},
+  {"id":"2.01","category":"Licensing / Regulatory","item":"Medicare and state licenses","description":"Please upload copies of all current operating licenses (state + Medicare).","status":"outstanding","notes":"","questions":[]},
+  {"id":"2.02","category":"Licensing / Regulatory","item":"Accreditation certificates","description":"Are you accredited (e.g., CHAP, ACHC, Joint Commission)? Please attach most recent certificate.","status":"outstanding","notes":"","questions":[]},
+  {"id":"2.03","category":"Licensing / Regulatory","item":"Survey reports","description":"Please provide the most recent 5 years of state or accreditation surveys and any Plans of Correction.","status":"outstanding","notes":"","questions":[]},
+  {"id":"2.04","category":"Licensing / Regulatory","item":"Audits / Repayments","description":"Have you had any Medicare, Medicaid, or payer audits in the past 3 years? If yes, please describe and attach correspondence.","status":"outstanding","notes":"","questions":[]},
+  {"id":"2.05","category":"Licensing / Regulatory","item":"OIG / SAM status","description":"Please confirm that no owners, officers, or staff are listed on the OIG Exclusion or SAM.gov databases.","status":"outstanding","notes":"","questions":[]},
+  {"id":"3.01","category":"Financial","item":"Financial statements","description":"Please upload full-year financial statements (P&L, Balance Sheet, Cash Flow) for the past 3 years and current YTD.","status":"outstanding","notes":"","questions":[]},
+  {"id":"3.02","category":"Financial","item":"Tax returns","description":"Please upload business tax returns (federal and state) for the past 3 years.","status":"outstanding","notes":"","questions":[]},
+  {"id":"3.03","category":"Financial","item":"AR aging","description":"Please provide an accounts receivable aging report as of the most recent month-end.","status":"outstanding","notes":"","questions":[]},
+  {"id":"3.04","category":"Financial","item":"Payer mix","description":"What % of revenue comes from Medicare, Medicaid, Private Pay, or other payers? Please include a summary.","status":"outstanding","notes":"","questions":[]},
+  {"id":"3.05","category":"Financial","item":"Debt or loans","description":"Please list all outstanding debt, lenders, and balances. Attach any loan or security agreements.","status":"outstanding","notes":"","questions":[]},
+  {"id":"3.06","category":"Financial","item":"Major expenses","description":"Please describe any one-time or nonrecurring expenses in the past 12 months.","status":"outstanding","notes":"","questions":[]},
+  {"id":"4.01","category":"Legal / Insurance","item":"Material contracts","description":"Please provide copies of key contracts: leases, referral agreements, billing, EHR vendors, or management services.","status":"outstanding","notes":"","questions":[]},
+  {"id":"4.02","category":"Legal / Insurance","item":"Insurance policies","description":"Please upload your current insurance certificates (general liability, workers' comp, professional liability).","status":"outstanding","notes":"","questions":[]},
+  {"id":"4.03","category":"Legal / Insurance","item":"Litigation / Claims","description":"Are there any pending lawsuits, employee claims, or regulatory complaints? If yes, please describe.","status":"outstanding","notes":"","questions":[]},
+  {"id":"4.04","category":"Legal / Insurance","item":"Liens or collateral","description":"Do you have any active UCC filings or liens against company assets?","status":"outstanding","notes":"","questions":[]},
+  {"id":"5.01","category":"HR / Payroll","item":"Employee roster","description":"Please provide an employee roster with role, start date, FTE status, and annual compensation.","status":"outstanding","notes":"","questions":[]},
+  {"id":"5.02","category":"HR / Payroll","item":"Key employees","description":"Who are your key management or clinical leaders (Administrator, DON, etc.)? How long have they been with the agency?","status":"outstanding","notes":"","questions":[]},
+  {"id":"5.03","category":"HR / Payroll","item":"Payroll summary","description":"Please provide payroll reports for the last 12 months (can redact SSNs).","status":"outstanding","notes":"","questions":[]},
+  {"id":"5.04","category":"HR / Payroll","item":"Contractors","description":"Do you use any 1099 caregivers or contractors? If so, please describe their roles and number.","status":"outstanding","notes":"","questions":[]},
+  {"id":"5.05","category":"HR / Payroll","item":"Benefits overview","description":"Please describe employee benefits offered (health, PTO, 401k, etc.).","status":"outstanding","notes":"","questions":[]},
+  {"id":"6.01","category":"Operations","item":"EHR / Software","description":"What EHR, scheduling, and billing systems do you use? Please list vendors and contract terms.","status":"outstanding","notes":"","questions":[]},
+  {"id":"6.02","category":"Operations","item":"Referral sources","description":"Who are your top 10 referral sources (by volume)?","status":"outstanding","notes":"","questions":[]},
+  {"id":"6.03","category":"Operations","item":"Policies & Procedures","description":"Please upload your policies manual or compliance handbook (CMS Conditions of Participation).","status":"outstanding","notes":"","questions":[]},
+  {"id":"6.04","category":"Operations","item":"Quality improvement (QI/QA)","description":"Please share the last 12 months of QI or QA meeting minutes or summaries.","status":"outstanding","notes":"","questions":[]},
+  {"id":"7.01","category":"Misc","item":"Office leases","description":"Please attach copies of current office lease(s) with term and renewal details.","status":"outstanding","notes":"","questions":[]},
+  {"id":"7.02","category":"Misc","item":"Vehicles or equipment","description":"Please list any owned or leased vehicles or durable medical equipment.","status":"outstanding","notes":"","questions":[]},
+  {"id":"7.03","category":"Misc","item":"IT vendors","description":"Please provide a list of major IT or data vendors with Business Associate Agreements (BAAs).","status":"outstanding","notes":"","questions":[]}
+];
+
 // ─── Diligence tab ─────────────────────────────────────────────────────────────
 function renderFlags() {
   const flags = deal.flags || { red: [], amber: [], green: [] };
@@ -1651,6 +2066,329 @@ function renderFlags() {
       </div>
     `;
   }).join('') || '<p style="color:#aaa;font-style:italic;font-size:13px;margin-top:16px;">No flags recorded. Upload documents to generate diligence flags.</p>';
+}
+
+function renderDiligence() {
+  // Ensure checklist exists
+  if (!deal.diligenceChecklist || !deal.diligenceChecklist.length) {
+    deal.diligenceChecklist = JSON.parse(JSON.stringify(DEFAULT_CHECKLIST));
+    saveDeal(deal);
+  }
+
+  const checklist = deal.diligenceChecklist;
+  const total = checklist.length;
+  const receivedCount = checklist.filter(i => i.status === 'received').length;
+  const addressedCount = checklist.filter(i => i.status === 'addressed').length;
+  const outstandingCount = checklist.filter(i => i.status === 'outstanding').length;
+  const doneCount = receivedCount + addressedCount;
+  const pct = total > 0 ? Math.round(doneCount / total * 100) : 0;
+
+  // Progress bar
+  const progressWrap = document.getElementById('dl-progress-wrap');
+  progressWrap.innerHTML = `
+    <div class="dl-progress-top">
+      <div class="dl-progress-label">${doneCount} of ${total} items received or addressed</div>
+      <div class="dl-progress-badges">
+        <span class="dl-badge dl-badge-outstanding">○ ${outstandingCount} Outstanding</span>
+        <span class="dl-badge dl-badge-received">◉ ${receivedCount} Received</span>
+        <span class="dl-badge dl-badge-addressed">✓ ${addressedCount} Addressed</span>
+      </div>
+    </div>
+    <div class="dl-progress-bar-bg">
+      <div class="dl-progress-bar-fill" style="width:${pct}%"></div>
+    </div>
+  `;
+
+  // Group by category
+  const categories = [];
+  const catMap = {};
+  for (const item of checklist) {
+    if (!catMap[item.category]) {
+      catMap[item.category] = [];
+      categories.push(item.category);
+    }
+    catMap[item.category].push(item);
+  }
+
+  // Render checklist
+  const checklistEl = document.getElementById('dl-checklist');
+  checklistEl.innerHTML = categories.map(cat => {
+    const items = catMap[cat];
+    const catAddressed = items.filter(i => i.status === 'addressed').length;
+    return `
+      <div class="dl-category">
+        <div class="dl-category-header">
+          <span class="dl-category-name">${escHtml(cat)}</span>
+          <span class="dl-category-count">${catAddressed}/${items.length} addressed</span>
+        </div>
+        ${items.map(item => renderChecklistItem(item)).join('')}
+      </div>
+    `;
+  }).join('');
+
+  // Wire up events
+  wireChecklistEvents();
+
+  // Open questions
+  renderOpenQuestions();
+
+  // Flags
+  renderFlags();
+}
+
+function statusIcon(status) {
+  if (status === 'addressed') return '<span style="color:#0F6E56;font-size:16px;">✓</span>';
+  if (status === 'received') return '<span style="color:#185FA5;font-size:15px;">◉</span>';
+  return '<span style="color:#bbb;font-size:16px;">○</span>';
+}
+
+function renderChecklistItem(item) {
+  const hasNotes = item.notes && item.notes.trim();
+  const hasQuestions = item.questions && item.questions.length;
+
+  const notesPreview = hasNotes
+    ? `<div class="dl-item-notes-preview">${escHtml(item.notes.length > 120 ? item.notes.slice(0, 120) + '…' : item.notes)}</div>`
+    : '';
+  const questionsPreview = hasQuestions
+    ? `<div class="dl-item-questions-preview">${item.questions.length} question${item.questions.length !== 1 ? 's' : ''}</div>`
+    : '';
+
+  const questionRows = (item.questions || []).map((q, qi) => `
+    <div class="dl-question-row" data-qidx="${qi}">
+      <span class="dl-question-num">${qi + 1}.</span>
+      <div class="dl-question-text" contenteditable="true" data-item-id="${escHtml(item.id)}" data-qidx="${qi}">${escHtml(q)}</div>
+      <button class="dl-question-del" data-item-id="${escHtml(item.id)}" data-qidx="${qi}" title="Delete question">&times;</button>
+    </div>
+  `).join('');
+
+  return `
+    <div class="dl-item" data-item-id="${escHtml(item.id)}">
+      <div class="dl-item-row" data-item-id="${escHtml(item.id)}">
+        <button class="dl-status-btn" data-status="${item.status}" data-item-id="${escHtml(item.id)}" title="Cycle status">${statusIcon(item.status)}</button>
+        <div class="dl-item-main">
+          <div class="dl-item-name">${escHtml(item.item)}</div>
+          ${notesPreview}
+          ${questionsPreview}
+        </div>
+        <div class="dl-item-id">${escHtml(item.id)}</div>
+      </div>
+      <div class="dl-item-expanded">
+        <div class="dl-description">${escHtml(item.description)}</div>
+        <div class="dl-field-label">Notes</div>
+        <textarea class="dl-notes-area" data-item-id="${escHtml(item.id)}" placeholder="Add notes…">${escHtml(item.notes || '')}</textarea>
+        <div class="dl-field-label">Questions</div>
+        <div class="dl-questions-list" data-item-id="${escHtml(item.id)}">
+          ${questionRows}
+        </div>
+        <button class="dl-add-question-btn" data-item-id="${escHtml(item.id)}">+ Add question</button>
+      </div>
+    </div>
+  `;
+}
+
+function wireChecklistEvents() {
+  const checklistEl = document.getElementById('dl-checklist');
+
+  // Status toggle buttons (stop propagation so row expand doesn't trigger)
+  checklistEl.querySelectorAll('.dl-status-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = btn.dataset.itemId;
+      const item = deal.diligenceChecklist.find(i => i.id === id);
+      if (!item) return;
+      const cycle = { outstanding: 'received', received: 'addressed', addressed: 'outstanding' };
+      item.status = cycle[item.status] || 'outstanding';
+      saveDeal(deal);
+      renderDiligence();
+    });
+  });
+
+  // Row click to expand/collapse
+  checklistEl.querySelectorAll('.dl-item-row').forEach(row => {
+    row.addEventListener('click', e => {
+      if (e.target.closest('.dl-status-btn')) return;
+      const id = row.dataset.itemId;
+      const itemEl = checklistEl.querySelector(`.dl-item[data-item-id="${CSS.escape(id)}"]`);
+      if (!itemEl) return;
+      itemEl.classList.toggle('expanded');
+    });
+  });
+
+  // Notes textarea — save on blur
+  checklistEl.querySelectorAll('.dl-notes-area').forEach(area => {
+    area.addEventListener('blur', () => {
+      const id = area.dataset.itemId;
+      const item = deal.diligenceChecklist.find(i => i.id === id);
+      if (!item) return;
+      item.notes = area.value;
+      saveDeal(deal);
+      // Update preview without full re-render — just re-render this item
+      refreshItemPreview(id);
+    });
+  });
+
+  // Question text — save on blur
+  checklistEl.querySelectorAll('.dl-question-text').forEach(div => {
+    div.addEventListener('blur', () => {
+      const id = div.dataset.itemId;
+      const qi = parseInt(div.dataset.qidx);
+      const item = deal.diligenceChecklist.find(i => i.id === id);
+      if (!item || !item.questions) return;
+      item.questions[qi] = div.textContent.trim();
+      saveDeal(deal);
+      renderOpenQuestions();
+    });
+    // Prevent enter from creating newline — save instead
+    div.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        div.blur();
+      }
+    });
+  });
+
+  // Delete question buttons
+  checklistEl.querySelectorAll('.dl-question-del').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = btn.dataset.itemId;
+      const qi = parseInt(btn.dataset.qidx);
+      const item = deal.diligenceChecklist.find(i => i.id === id);
+      if (!item) return;
+      item.questions.splice(qi, 1);
+      saveDeal(deal);
+      // Re-render just this item's expanded content
+      const itemEl = checklistEl.querySelector(`.dl-item[data-item-id="${CSS.escape(id)}"]`);
+      const wasExpanded = itemEl && itemEl.classList.contains('expanded');
+      renderDiligence();
+      if (wasExpanded) {
+        const newItemEl = document.getElementById('dl-checklist').querySelector(`.dl-item[data-item-id="${CSS.escape(id)}"]`);
+        if (newItemEl) newItemEl.classList.add('expanded');
+      }
+    });
+  });
+
+  // Add question buttons
+  checklistEl.querySelectorAll('.dl-add-question-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = btn.dataset.itemId;
+      const item = deal.diligenceChecklist.find(i => i.id === id);
+      if (!item) return;
+      if (!item.questions) item.questions = [];
+      item.questions.push('');
+      saveDeal(deal);
+      const itemEl = checklistEl.querySelector(`.dl-item[data-item-id="${CSS.escape(id)}"]`);
+      const wasExpanded = itemEl && itemEl.classList.contains('expanded');
+      renderDiligence();
+      const newChecklistEl = document.getElementById('dl-checklist');
+      const newItemEl = newChecklistEl.querySelector(`.dl-item[data-item-id="${CSS.escape(id)}"]`);
+      if (newItemEl) {
+        newItemEl.classList.add('expanded');
+        // Focus the last question text field
+        const qTexts = newItemEl.querySelectorAll('.dl-question-text');
+        if (qTexts.length) qTexts[qTexts.length - 1].focus();
+      }
+    });
+  });
+}
+
+function refreshItemPreview(id) {
+  const item = deal.diligenceChecklist.find(i => i.id === id);
+  if (!item) return;
+  const itemEl = document.getElementById('dl-checklist').querySelector(`.dl-item[data-item-id="${CSS.escape(id)}"]`);
+  if (!itemEl) return;
+  const main = itemEl.querySelector('.dl-item-main');
+  if (!main) return;
+  const hasNotes = item.notes && item.notes.trim();
+  const hasQuestions = item.questions && item.questions.length;
+  const nameEl = main.querySelector('.dl-item-name');
+  // Rebuild preview parts
+  let html = `<div class="dl-item-name">${escHtml(item.item)}</div>`;
+  if (hasNotes) html += `<div class="dl-item-notes-preview">${escHtml(item.notes.length > 120 ? item.notes.slice(0, 120) + '…' : item.notes)}</div>`;
+  if (hasQuestions) html += `<div class="dl-item-questions-preview">${item.questions.length} question${item.questions.length !== 1 ? 's' : ''}</div>`;
+  main.innerHTML = html;
+}
+
+function renderOpenQuestions() {
+  const checklist = deal.diligenceChecklist || [];
+  const el = document.getElementById('dl-open-questions');
+  if (!el) return;
+
+  // Gather all questions from items
+  const allQ = [];
+  for (const item of checklist) {
+    if (item.questions && item.questions.length) {
+      for (const q of item.questions) {
+        if (q && q.trim()) {
+          allQ.push({ context: item.category + ' — ' + item.id, text: q, itemId: item.id, resolved: false });
+        }
+      }
+    }
+  }
+
+  // Persist deal-level freeform questions
+  if (!deal.openQuestions) deal.openQuestions = [];
+  const freeQ = deal.openQuestions;
+  const openCount = allQ.length + freeQ.filter(q => !q.resolved).length;
+
+  const itemsHtml = allQ.map((q, i) => `
+    <div class="dl-oq-item" data-oq-type="item" data-oq-idx="${i}">
+      <div class="dl-oq-context">${escHtml(q.context)}</div>
+      <div class="dl-oq-text">${escHtml(q.text)}</div>
+    </div>
+  `).join('');
+
+  const freeHtml = freeQ.map((q, i) => `
+    <div class="dl-oq-item${q.resolved ? ' resolved' : ''}" data-oq-type="free" data-oq-idx="${i}">
+      <div class="dl-oq-context">General</div>
+      <div class="dl-oq-text">${escHtml(q.text)}</div>
+      <button class="dl-oq-resolve-btn" data-oq-idx="${i}">${q.resolved ? 'Resolved' : 'Resolve'}</button>
+    </div>
+  `).join('');
+
+  el.innerHTML = `
+    <div class="dl-open-questions-header">
+      <div class="dl-open-questions-title">Open Questions</div>
+      <div class="dl-oq-count">${openCount} open</div>
+    </div>
+    ${itemsHtml}
+    ${freeHtml}
+    <div class="dl-oq-add-row">
+      <input class="dl-oq-input" id="dl-oq-input" type="text" placeholder="Add a free-form question…">
+      <button class="dl-oq-add-btn" id="dl-oq-add-btn">Add</button>
+    </div>
+  `;
+
+  // Wire resolve buttons
+  el.querySelectorAll('.dl-oq-resolve-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.oqIdx);
+      if (!deal.openQuestions[idx]) return;
+      deal.openQuestions[idx].resolved = !deal.openQuestions[idx].resolved;
+      saveDeal(deal);
+      renderOpenQuestions();
+    });
+  });
+
+  // Wire add button
+  const addBtn = document.getElementById('dl-oq-add-btn');
+  const oqInput = document.getElementById('dl-oq-input');
+  function addFreeQuestion() {
+    const text = oqInput.value.trim();
+    if (!text) return;
+    if (!deal.openQuestions) deal.openQuestions = [];
+    deal.openQuestions.push({ text, resolved: false });
+    saveDeal(deal);
+    renderOpenQuestions();
+    // Re-focus input for quick entry
+    const newInput = document.getElementById('dl-oq-input');
+    if (newInput) newInput.focus();
+  }
+  addBtn.addEventListener('click', addFreeQuestion);
+  oqInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addFreeQuestion(); }
+  });
 }
 
 // ─── Valuation tab ─────────────────────────────────────────────────────────────
