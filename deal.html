@@ -10,7 +10,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f5f5f0; color: #1a1a18; min-height: 100vh; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 15px; background: #f5f5f0; color: #1a1a18; min-height: 100vh; }
 
   /* ─── Top bar ─── */
   .top-bar {
@@ -31,7 +31,7 @@
     gap: 6px;
     color: #888;
     text-decoration: none;
-    font-size: 13px;
+    font-size: 14px;
     padding: 5px 8px;
     border-radius: 6px;
     transition: background 0.15s, color 0.15s;
@@ -40,14 +40,14 @@
   .back-btn:hover { background: #f5f5f0; color: #1a1a18; }
   .top-bar-divider { width: 0.5px; height: 20px; background: #ddd; }
   .top-bar-info { flex: 1; min-width: 0; }
-  .deal-name-header { font-size: 15px; font-weight: 600; color: #1a1a18; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .deal-meta-header { font-size: 12px; color: #888; }
+  .deal-name-header { font-size: 17px; font-weight: 600; color: #1a1a18; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .deal-meta-header { font-size: 14px; color: #888; }
   .status-badge {
     display: inline-flex;
     align-items: center;
     padding: 4px 10px;
     border-radius: 6px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     user-select: none;
@@ -74,7 +74,7 @@
   .status-menu.open { display: block; }
   .status-menu-item {
     padding: 9px 14px;
-    font-size: 13px;
+    font-size: 14px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -100,7 +100,7 @@
   .tab-row::-webkit-scrollbar { display: none; }
   .tab {
     padding: 13px 16px 12px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     color: #888;
     cursor: pointer;
@@ -119,7 +119,7 @@
 
   /* ─── Generic ─── */
   .section-title {
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 500;
     color: #888;
     text-transform: uppercase;
@@ -140,7 +140,7 @@
   .metric-value { font-size: 20px; font-weight: 600; color: #1a1a18; line-height: 1.2; }
   .metric-value.pos { color: #0F6E56; }
   .metric-value.neg { color: #A32D2D; }
-  .metric-sub { font-size: 11px; color: #888; margin-top: 2px; }
+  .metric-sub { font-size: 12px; color: #888; margin-top: 2px; }
 
   /* ─── Narratives ─── */
   .narrative-block {
@@ -178,7 +178,7 @@
     border-radius: 10px;
     padding: 16px;
   }
-  .chart-title { font-size: 12px; font-weight: 600; color: #555; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  .chart-title { font-size: 13px; font-weight: 600; color: #555; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
   .chart-wrap { position: relative; height: 180px; }
 
   /* ─── Period toggle ─── */
@@ -194,7 +194,7 @@
   .period-btn {
     padding: 5px 12px;
     border-radius: 5px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     border: none;
@@ -218,7 +218,7 @@
     text-align: right;
     font-weight: 600;
     color: #555;
-    font-size: 11px;
+    font-size: 12px;
     border-bottom: 0.5px solid #ddd;
     white-space: nowrap;
     position: sticky;
@@ -259,7 +259,7 @@
   .market-chart-card { background: #fff; border: 0.5px solid #ddd; border-radius: 10px; padding: 16px; }
   .market-table-wrap { overflow-x: auto; border: 0.5px solid #ddd; border-radius: 8px; }
   .market-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
-  .market-table th { background: #f5f5f0; padding: 8px 10px; font-size: 11px; font-weight: 600; color: #555; border-bottom: 0.5px solid #ddd; text-align: left; }
+  .market-table th { background: #f5f5f0; padding: 8px 10px; font-size: 12px; font-weight: 600; color: #555; border-bottom: 0.5px solid #ddd; text-align: left; }
   .market-table th.num { text-align: right; }
   .market-table td { padding: 7px 10px; border-bottom: 0.5px solid #f0f0eb; font-size: 12.5px; }
   .market-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
@@ -296,12 +296,12 @@
   .flag-dot-red { background: #A32D2D; }
   .flag-dot-amber { background: #854F0B; }
   .flag-dot-green { background: #0F6E56; }
-  .flag-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-  .flag-count { font-size: 11px; color: #888; }
+  .flag-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+  .flag-count { font-size: 12px; color: #888; }
 
   .flag-list { display: flex; flex-direction: column; gap: 6px; }
   .flag-item {
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.55;
     padding: 9px 12px;
     border-radius: 7px;
@@ -322,14 +322,14 @@
     gap: 12px;
   }
   .val-row:last-child { border-bottom: none; }
-  .val-label { font-size: 13px; color: #444; flex: 1; }
+  .val-label { font-size: 14px; color: #444; flex: 1; }
   .val-input {
     width: 110px;
     text-align: right;
     padding: 5px 8px;
     border: 0.5px solid #ccc;
     border-radius: 6px;
-    font-size: 13px;
+    font-size: 14px;
     font-family: inherit;
     color: #1a1a18;
     background: #fff;
@@ -344,12 +344,12 @@
     color: #0F6E56;
     margin: 8px 0 4px;
   }
-  .ebitda-sub { font-size: 13px; color: #888; }
+  .ebitda-sub { font-size: 14px; color: #888; }
 
   .matrix-wrap { overflow-x: auto; }
   .matrix-table {
     border-collapse: collapse;
-    font-size: 12px;
+    font-size: 13px;
     width: 100%;
     min-width: 380px;
   }
@@ -359,7 +359,7 @@
     text-align: right;
     font-weight: 600;
     color: #555;
-    font-size: 11px;
+    font-size: 12px;
     border: 0.5px solid #ddd;
     white-space: nowrap;
   }
@@ -370,31 +370,16 @@
     text-align: right;
     font-size: 12.5px;
   }
-  .matrix-table td:first-child { text-align: left; color: #888; font-size: 11px; }
+  .matrix-table td:first-child { text-align: left; color: #888; font-size: 12px; }
   .matrix-highlight { background: #edf7f2; font-weight: 600; color: #0F6E56; }
   .matrix-highlight-row td { background: #f0faf5; }
 
-  /* ─── Documents ─── */
-  .doc-dropzone {
-    border: 1.5px dashed #ccc;
-    border-radius: 8px;
-    padding: 24px 20px;
-    text-align: center;
-    cursor: pointer;
-    transition: border-color 0.15s, background 0.15s;
-  }
-  .doc-dropzone:hover, .doc-dropzone.drag-over {
-    border-color: #1a1a18;
-    background: #f0f0eb;
-  }
-  .doc-dropzone-icon { font-size: 24px; margin-bottom: 6px; }
-  .doc-dropzone-text { font-size: 13px; color: #555; }
-  .doc-dropzone-hint { font-size: 11px; color: #aaa; margin-top: 3px; }
+  /* ─── Documents / Data Room ─── */
   #doc-file-input { display: none; }
 
   .btn {
     display: inline-flex; align-items: center; gap: 6px;
-    padding: 7px 14px; border-radius: 7px; font-size: 13px; font-weight: 500;
+    padding: 7px 14px; border-radius: 7px; font-size: 14px; font-weight: 500;
     cursor: pointer; border: none; transition: opacity 0.15s, background 0.15s;
     text-decoration: none; font-family: inherit;
   }
@@ -405,18 +390,130 @@
   .btn-outline:hover { background: #f5f5f0; opacity: 1; }
   .btn-blue { background: #185FA5; color: #fff; }
 
-  .doc-files-pending { margin: 10px 0; display: flex; flex-direction: column; gap: 6px; }
-  .doc-file-item {
+  /* Data room header */
+  .dr-header {
     display: flex; align-items: center; justify-content: space-between;
-    background: #f5f5f0; border-radius: 6px; padding: 7px 10px; font-size: 12px;
+    margin-bottom: 20px;
+  }
+  .dr-title { font-size: 15px; font-weight: 600; color: #1a1a18; }
+  .dr-subtitle { font-size: 13px; color: #888; margin-top: 2px; }
+
+  /* Upload panel (collapsible) */
+  .dr-upload-panel {
+    background: #fff;
+    border: 0.5px solid #ddd;
+    border-radius: 10px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+  .dr-upload-toggle {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; cursor: pointer; user-select: none;
+    font-size: 14px; font-weight: 500; color: #1a1a18;
+    border: none; background: none; width: 100%; text-align: left;
+    font-family: inherit;
+  }
+  .dr-upload-toggle:hover { background: #fafaf8; }
+  .dr-upload-toggle-arrow { font-size: 12px; color: #888; transition: transform 0.2s; }
+  .dr-upload-toggle.open .dr-upload-toggle-arrow { transform: rotate(180deg); }
+  .dr-upload-body { display: none; padding: 0 16px 16px; border-top: 0.5px solid #eee; }
+  .dr-upload-body.open { display: block; }
+
+  .doc-dropzone {
+    border: 1.5px dashed #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    margin-top: 14px;
+  }
+  .doc-dropzone:hover, .doc-dropzone.drag-over {
+    border-color: #1a1a18;
+    background: #f0f0eb;
+  }
+  .doc-dropzone-icon { font-size: 22px; margin-bottom: 4px; }
+  .doc-dropzone-text { font-size: 14px; color: #555; }
+  .doc-dropzone-hint { font-size: 12px; color: #aaa; margin-top: 3px; }
+
+  .doc-files-pending { margin: 10px 0 0; display: flex; flex-direction: column; gap: 6px; }
+  .doc-file-item {
+    display: flex; align-items: center; gap: 8px;
+    background: #f5f5f0; border-radius: 6px; padding: 7px 10px; font-size: 13px;
   }
   .doc-file-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .doc-file-size { color: #888; margin-left: 8px; }
+  .doc-file-size { color: #888; flex-shrink: 0; }
   .doc-file-remove {
-    background: none; border: none; cursor: pointer; color: #888;
-    padding: 0 0 0 8px; font-size: 14px; line-height: 1;
+    background: none; border: none; cursor: pointer; color: #aaa;
+    padding: 0; font-size: 15px; line-height: 1; flex-shrink: 0;
   }
   .doc-file-remove:hover { color: #A32D2D; }
+
+  .dr-upload-controls {
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px;
+  }
+  .dr-category-select {
+    font-size: 13px; padding: 6px 10px; border: 0.5px solid #ccc; border-radius: 6px;
+    background: #fff; color: #1a1a18; font-family: inherit; cursor: pointer;
+  }
+
+  /* Data room body */
+  .dr-empty {
+    text-align: center; padding: 48px 20px; color: #aaa;
+  }
+  .dr-empty-icon { font-size: 32px; margin-bottom: 10px; }
+  .dr-empty-text { font-size: 14px; }
+
+  .dr-category-section { margin-bottom: 24px; }
+  .dr-category-header {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px; padding-bottom: 6px;
+    border-bottom: 0.5px solid #eee;
+  }
+  .dr-category-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #888;
+  }
+  .dr-category-count {
+    font-size: 12px; background: #f0f0eb; color: #888;
+    border-radius: 10px; padding: 1px 7px;
+  }
+
+  .dr-doc-card {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: #fff; border: 0.5px solid #e8e8e3; border-radius: 8px;
+    padding: 10px 12px; margin-bottom: 6px; transition: border-color 0.12s;
+  }
+  .dr-doc-card:hover { border-color: #bbb; }
+  .dr-doc-icon {
+    width: 32px; height: 32px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0; margin-top: 1px;
+  }
+  .dr-doc-icon-pdf  { background: #FDECEA; }
+  .dr-doc-icon-img  { background: #E8F5E9; }
+  .dr-doc-icon-csv  { background: #E8F0FD; }
+  .dr-doc-icon-txt  { background: #FFF8E1; }
+  .dr-doc-icon-other{ background: #f0f0eb; }
+  .dr-doc-body { flex: 1; min-width: 0; }
+  .dr-doc-name { font-size: 14px; font-weight: 500; color: #1a1a18; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .dr-doc-summary { font-size: 13px; color: #666; margin-top: 2px; line-height: 1.4; }
+  .dr-doc-meta { font-size: 12px; color: #aaa; margin-top: 4px; }
+  .dr-doc-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-top: 2px; }
+  .dr-doc-remove {
+    background: none; border: none; cursor: pointer; color: #ccc;
+    font-size: 16px; line-height: 1; padding: 2px 4px; border-radius: 4px;
+  }
+  .dr-doc-remove:hover { color: #A32D2D; background: #fdecea; }
+
+  /* Diligence doc badge */
+  .dl-doc-badge {
+    font-size: 10px; color: #185FA5; background: #deeaf7;
+    border-radius: 10px; padding: 2px 7px; cursor: pointer;
+    border: none; font-family: inherit; font-weight: 500;
+    transition: background 0.12s;
+  }
+  .dl-doc-badge:hover { background: #c5d9f0; }
 
   .analysis-result {
     background: #fff;
@@ -424,7 +521,7 @@
     border-radius: 10px;
     padding: 16px;
     margin-top: 16px;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
     color: #1a1a18;
   }
@@ -437,29 +534,15 @@
     border-radius: 8px;
     padding: 12px 14px;
     margin-top: 10px;
-    font-size: 13px;
+    font-size: 14px;
   }
   .suggestion-top {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 8px;
   }
-  .suggestion-section { font-weight: 600; color: #185FA5; font-size: 12px; }
-  .suggestion-desc { font-size: 12px; color: #555; margin-bottom: 8px; }
+  .suggestion-section { font-weight: 600; color: #185FA5; font-size: 13px; }
+  .suggestion-desc { font-size: 13px; color: #555; margin-bottom: 8px; }
   .suggestion-btns { display: flex; gap: 6px; }
-
-  .doc-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
-  .doc-item {
-    background: #f5f5f0;
-    border-radius: 7px;
-    padding: 10px 12px;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-  }
-  .doc-item-name { font-weight: 500; color: #1a1a18; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .doc-item-meta { color: #888; flex-shrink: 0; }
 
   /* ─── Chat ─── */
   .chat-container {
@@ -530,7 +613,7 @@
     background: #1a1a18;
     color: #fff;
     border: none;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     cursor: pointer;
     font-family: inherit;
@@ -547,7 +630,7 @@
     align-items: center;
     justify-content: center;
     color: #aaa;
-    font-size: 13px;
+    font-size: 14px;
     gap: 6px;
     text-align: center;
   }
@@ -555,7 +638,7 @@
 
   /* ─── Status bar ─── */
   .status-bar {
-    font-size: 12px;
+    font-size: 13px;
     padding: 6px 0;
     color: #888;
   }
@@ -579,7 +662,7 @@
     flex-wrap: wrap;
   }
   .dl-progress-label {
-    font-size: 13px;
+    font-size: 14px;
     color: #444;
     font-weight: 500;
   }
@@ -593,7 +676,7 @@
     gap: 4px;
     padding: 2px 8px;
     border-radius: 4px;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 500;
   }
   .dl-badge-outstanding { background: #FDECEA; color: #B71C1C; }
@@ -624,14 +707,14 @@
     margin-bottom: 4px;
   }
   .dl-category-name {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.07em;
     color: #555;
   }
   .dl-category-count {
-    font-size: 11px;
+    font-size: 12px;
     color: #aaa;
     margin-left: auto;
   }
@@ -662,7 +745,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 11px;
+    font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.02em;
     border-radius: 4px;
@@ -680,22 +763,33 @@
     min-width: 0;
   }
   .dl-item-name {
-    font-size: 13px;
+    font-size: 15px;
     font-weight: 600;
     color: #1a1a18;
     line-height: 1.3;
   }
   .dl-item-notes-preview {
-    font-size: 12px;
+    font-size: 13px;
     color: #666;
     margin-top: 2px;
     line-height: 1.4;
   }
   .dl-item-questions-preview {
-    font-size: 12px;
+    font-size: 13px;
     color: #185FA5;
     margin-top: 2px;
   }
+  .dl-item-docs-preview {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
+  }
+  .dl-doc-link-btn {
+    font-size: 12px; color: #185FA5; background: #deeaf7;
+    border: none; border-radius: 4px; padding: 2px 7px;
+    cursor: pointer; font-family: inherit; font-weight: 500;
+    white-space: nowrap; overflow: hidden; max-width: 200px;
+    text-overflow: ellipsis;
+  }
+  .dl-doc-link-btn:hover { background: #c5d9f0; }
   .dl-item-id {
     font-size: 10px;
     color: #bbb;
@@ -711,7 +805,7 @@
   .dl-item.expanded .dl-item-expanded { display: block; }
 
   .dl-description {
-    font-size: 12px;
+    font-size: 13px;
     color: #666;
     line-height: 1.5;
     margin: 8px 0 6px;
@@ -732,7 +826,7 @@
     padding: 7px 9px;
     border: 0.5px solid #ddd;
     border-radius: 6px;
-    font-size: 12px;
+    font-size: 13px;
     font-family: inherit;
     color: #1a1a18;
     background: #fff;
@@ -756,7 +850,7 @@
     gap: 6px;
   }
   .dl-question-num {
-    font-size: 11px;
+    font-size: 12px;
     color: #888;
     flex-shrink: 0;
     margin-top: 3px;
@@ -764,7 +858,7 @@
   }
   .dl-question-text {
     flex: 1;
-    font-size: 12px;
+    font-size: 13px;
     color: #1a1a18;
     line-height: 1.45;
     padding: 4px 7px;
@@ -794,7 +888,7 @@
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 13px;
     color: #185FA5;
     padding: 2px 0;
     text-decoration: underline;
@@ -817,12 +911,12 @@
     margin-bottom: 10px;
   }
   .dl-open-questions-title {
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 700;
     color: #1a1a18;
   }
   .dl-oq-count {
-    font-size: 11px;
+    font-size: 12px;
     color: #888;
   }
   .dl-oq-item {
@@ -857,7 +951,7 @@
     border: 0.5px solid #ddd;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 11px;
+    font-size: 12px;
     color: #888;
     padding: 2px 7px;
     flex-shrink: 0;
@@ -893,7 +987,7 @@
     background: #1a1a18;
     color: #fff;
     border: none;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     cursor: pointer;
     font-family: inherit;
@@ -910,7 +1004,7 @@
     border: 0.5px solid #ddd;
     border-radius: 7px;
     padding: 7px 14px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: 500;
     color: #555;
     cursor: pointer;
@@ -1122,7 +1216,7 @@
             <tbody id="market-county-tbody"></tbody>
           </table>
         </div>
-        <div style="font-size:11px;color:#aaa;margin-top:6px" id="market-data-note"></div>
+        <div style="font-size:12px;color:#aaa;margin-top:6px" id="market-data-note"></div>
 
         <div class="section-title" style="margin-top:1.4rem">Market Sizing</div>
         <div class="metric-grid" id="market-sizing-metrics"></div>
@@ -1146,25 +1240,52 @@
 
   <!-- ── Documents Tab ──────────────────────────────────────────────────── -->
   <div class="tab-panel" id="tab-documents">
-    <div class="section-title">Upload Documents</div>
-    <div class="doc-dropzone" id="doc-dropzone" tabindex="0" role="button">
-      <div class="doc-dropzone-icon">📎</div>
-      <div class="doc-dropzone-text">Drop files here or <strong>click to browse</strong></div>
-      <div class="doc-dropzone-hint">PDF, images, CSV, TXT — max 10MB per file</div>
-    </div>
-    <input type="file" id="doc-file-input" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.csv,.txt">
-    <div class="doc-files-pending" id="doc-files-pending"></div>
-    <div style="margin-top:10px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-      <button class="btn btn-dark" id="analyze-btn" disabled>Analyze Documents</button>
-      <div class="status-bar" id="doc-status"></div>
+
+    <!-- Upload panel (collapsible) -->
+    <div class="dr-upload-panel">
+      <button class="dr-upload-toggle" id="dr-upload-toggle">
+        <span>+ Add Documents</span>
+        <span class="dr-upload-toggle-arrow">▼</span>
+      </button>
+      <div class="dr-upload-body" id="dr-upload-body">
+        <div class="doc-dropzone" id="doc-dropzone" tabindex="0" role="button">
+          <div class="doc-dropzone-icon">📎</div>
+          <div class="doc-dropzone-text">Drop files here or <strong>click to browse</strong></div>
+          <div class="doc-dropzone-hint">PDF, images, CSV, TXT — max 10MB per file</div>
+        </div>
+        <input type="file" id="doc-file-input" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.csv,.txt">
+        <div class="doc-files-pending" id="doc-files-pending"></div>
+        <div class="dr-upload-controls">
+          <select class="dr-category-select" id="doc-category-select">
+            <option value="auto">Auto-detect category</option>
+            <option value="Corporate">Corporate</option>
+            <option value="Licensing / Regulatory">Licensing / Regulatory</option>
+            <option value="Financial">Financial</option>
+            <option value="Legal / Insurance">Legal / Insurance</option>
+            <option value="HR / Payroll">HR / Payroll</option>
+            <option value="Clinical / Quality">Clinical / Quality</option>
+            <option value="Billing / Reimbursement">Billing / Reimbursement</option>
+            <option value="Operations">Operations</option>
+            <option value="Technology & Cybersecurity">Technology & Cybersecurity</option>
+            <option value="Assets & Property">Assets & Property</option>
+            <option value="Other">Other</option>
+          </select>
+          <button class="btn btn-dark" id="analyze-btn" disabled>Upload &amp; Analyze</button>
+          <div class="status-bar" id="doc-status"></div>
+        </div>
+        <div id="analysis-output"></div>
+      </div>
     </div>
 
-    <div id="analysis-output"></div>
-
-    <div id="doc-stored-section" style="display:none;">
-      <div class="section-title">Uploaded Documents</div>
-      <div class="doc-list" id="doc-list"></div>
+    <!-- Data room -->
+    <div class="dr-header">
+      <div>
+        <div class="dr-title">Data Room</div>
+        <div class="dr-subtitle" id="dr-subtitle">No documents uploaded yet</div>
+      </div>
     </div>
+    <div id="dr-body"></div>
+
   </div>
 
   <!-- ── Chat Tab ───────────────────────────────────────────────────────── -->
@@ -1174,7 +1295,7 @@
         <div class="chat-empty" id="chat-empty">
           <div class="chat-empty-icon">💬</div>
           <div>Ask anything about this deal</div>
-          <div style="font-size:11px; color:#bbb;">Context loaded from deal data</div>
+          <div style="font-size:12px; color:#bbb;">Context loaded from deal data</div>
         </div>
       </div>
       <div class="chat-input-row">
@@ -2106,7 +2227,7 @@ function renderFlags() {
         </div>
       </div>
     `;
-  }).join('') || '<p style="color:#aaa;font-style:italic;font-size:13px;margin-top:16px;">No flags recorded. Upload documents to generate diligence flags.</p>';
+  }).join('') || '<p style="color:#aaa;font-style:italic;font-size:14px;margin-top:16px;">No flags recorded. Upload documents to generate diligence flags.</p>';
 }
 
 function renderDiligence() {
@@ -2187,11 +2308,19 @@ function renderChecklistItem(item) {
   const hasNotes = item.notes && item.notes.trim();
   const hasQuestions = item.questions && item.questions.length;
 
+  // Linked documents
+  const linkedDocs = (item.linkedDocs || [])
+    .map(docId => (deal.documents || []).find(d => d.id === docId))
+    .filter(Boolean);
+
   const notesPreview = hasNotes
     ? `<div class="dl-item-notes-preview">${escHtml(item.notes.length > 120 ? item.notes.slice(0, 120) + '…' : item.notes)}</div>`
     : '';
   const questionsPreview = hasQuestions
     ? `<div class="dl-item-questions-preview">${item.questions.length} question${item.questions.length !== 1 ? 's' : ''}</div>`
+    : '';
+  const docsPreview = linkedDocs.length
+    ? `<div class="dl-item-docs-preview">${linkedDocs.map(d => `<button class="dl-doc-link-btn" data-doc-id="${escHtml(d.id)}" data-item-id="${escHtml(item.id)}">📎 ${escHtml(d.name)}</button>`).join('')}</div>`
     : '';
 
   const questionRows = (item.questions || []).map((q, qi) => `
@@ -2202,6 +2331,24 @@ function renderChecklistItem(item) {
     </div>
   `).join('');
 
+  // Doc link selector inside expanded view
+  const availableDocs = (deal.documents || []);
+  const docSelectorOptions = availableDocs.length
+    ? availableDocs.map(d => {
+        const linked = linkedDocs.some(ld => ld.id === d.id);
+        return `<option value="${escHtml(d.id)}" ${linked ? 'selected' : ''}>${escHtml(d.name)}</option>`;
+      }).join('')
+    : '';
+  const docLinker = availableDocs.length ? `
+    <div class="dl-field-label" style="margin-top:10px;">Linked Documents</div>
+    <div class="dl-doc-linker">
+      <select class="dl-doc-link-select" data-item-id="${escHtml(item.id)}" multiple size="${Math.min(availableDocs.length, 4)}" style="width:100%;font-size:13px;border:0.5px solid #ddd;border-radius:6px;padding:4px;">
+        ${docSelectorOptions}
+      </select>
+      <div style="font-size:12px;color:#aaa;margin-top:3px;">Hold Ctrl/Cmd to select multiple</div>
+    </div>
+  ` : '';
+
   return `
     <div class="dl-item" data-item-id="${escHtml(item.id)}">
       <div class="dl-item-row" data-item-id="${escHtml(item.id)}">
@@ -2210,6 +2357,7 @@ function renderChecklistItem(item) {
           <div class="dl-item-name">${escHtml(item.item)}</div>
           ${notesPreview}
           ${questionsPreview}
+          ${docsPreview}
         </div>
         <div class="dl-item-id">${escHtml(item.id)}</div>
       </div>
@@ -2222,6 +2370,7 @@ function renderChecklistItem(item) {
           ${questionRows}
         </div>
         <button class="dl-add-question-btn" data-item-id="${escHtml(item.id)}">+ Add question</button>
+        ${docLinker}
       </div>
     </div>
   `;
@@ -2309,6 +2458,26 @@ function wireChecklistEvents() {
     });
   });
 
+  // Doc link buttons (in preview row) — jump to Documents tab
+  checklistEl.querySelectorAll('.dl-doc-link-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      switchTab('documents');
+    });
+  });
+
+  // Doc link multi-select — save on change
+  checklistEl.querySelectorAll('.dl-doc-link-select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const id = sel.dataset.itemId;
+      const item = deal.diligenceChecklist.find(i => i.id === id);
+      if (!item) return;
+      item.linkedDocs = Array.from(sel.selectedOptions).map(o => o.value);
+      saveDeal(deal);
+      refreshItemPreview(id);
+    });
+  });
+
   // Add question buttons
   checklistEl.querySelectorAll('.dl-add-question-btn').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -2345,10 +2514,16 @@ function refreshItemPreview(id) {
   const hasQuestions = item.questions && item.questions.length;
   const nameEl = main.querySelector('.dl-item-name');
   // Rebuild preview parts
+  const linkedDocs = (item.linkedDocs || []).map(docId => (deal.documents || []).find(d => d.id === docId)).filter(Boolean);
   let html = `<div class="dl-item-name">${escHtml(item.item)}</div>`;
   if (hasNotes) html += `<div class="dl-item-notes-preview">${escHtml(item.notes.length > 120 ? item.notes.slice(0, 120) + '…' : item.notes)}</div>`;
   if (hasQuestions) html += `<div class="dl-item-questions-preview">${item.questions.length} question${item.questions.length !== 1 ? 's' : ''}</div>`;
+  if (linkedDocs.length) html += `<div class="dl-item-docs-preview">${linkedDocs.map(d => `<button class="dl-doc-link-btn" data-doc-id="${escHtml(d.id)}" data-item-id="${escHtml(item.id)}">📎 ${escHtml(d.name)}</button>`).join('')}</div>`;
   main.innerHTML = html;
+  // Re-wire doc link buttons after innerHTML update
+  main.querySelectorAll('.dl-doc-link-btn').forEach(btn => {
+    btn.addEventListener('click', e => { e.stopPropagation(); switchTab('documents'); });
+  });
 }
 
 function renderOpenQuestions() {
@@ -2495,24 +2670,132 @@ function renderMatrix(ebitda) {
 // ─── Documents tab ─────────────────────────────────────────────────────────────
 let docPendingFiles = [];
 
-function renderDocuments() {
-  renderStoredDocs();
-  setupDocDropzone();
+const DOC_CATEGORIES = [
+  'Corporate', 'Licensing / Regulatory', 'Financial', 'Legal / Insurance',
+  'HR / Payroll', 'Clinical / Quality', 'Billing / Reimbursement',
+  'Operations', 'Technology & Cybersecurity', 'Assets & Property', 'Other'
+];
+
+// Keyword-based auto-categorizer
+function autoDetectCategory(filename) {
+  const n = filename.toLowerCase();
+  if (/tax|941|payroll tax|irs|k-1|1120|1065|schedule/.test(n) && /financial|p&l|income|balance/.test(n) === false) return 'Financial';
+  if (/p&l|profit|loss|income|revenue|financial|balance sheet|cash flow|bank stmt|bank statement|quickbooks|ar aging|aging|accounts receivable|accounts payable|ebitda|add.?back/.test(n)) return 'Financial';
+  if (/tax return|tax filing|federal tax|state tax|tax/.test(n)) return 'Financial';
+  if (/941|940|payroll report|payroll summary|w-2|w2/.test(n)) return 'Financial';
+  if (/articles|bylaws|operating agreement|ownership|cap table|org chart|minutes|formation|good standing|certificate of incorporation/.test(n)) return 'Corporate';
+  if (/license|accreditation|chap|achc|joint commission|survey|plan of correction|medicare cert|medicaid cert|oig|sam.gov|coi|con |certificate of need/.test(n)) return 'Licensing / Regulatory';
+  if (/evv|electronic visit/.test(n)) return 'Licensing / Regulatory';
+  if (/hipaa|security risk|baa|business associate|breach|incident log|data breach|sra/.test(n)) return 'Technology & Cybersecurity';
+  if (/contract|agreement|lease|referral|mco contract|vendor|nda|non.compete|non.solicit|ucc|lien|osha|employment agreement/.test(n)) return 'Legal / Insurance';
+  if (/insurance|liability|workers.?comp|policy|certificate of insurance/.test(n)) return 'Legal / Insurance';
+  if (/employee|roster|payroll|hire|turnover|benefits|pto|401k|background check|training|competency|staff/.test(n)) return 'HR / Payroll';
+  if (/oasis|star rating|patient|census|quality|qi|qa|qapi|rehospitalization|satisfaction|incident|adverse event|clinical/.test(n)) return 'Clinical / Quality';
+  if (/billing|claim|denial|days in ar|days ar|rate schedule|pdgm|lupa|adr|clearinghouse|reimbursement/.test(n)) return 'Billing / Reimbursement';
+  if (/referral|ehr|software|mco|waiver|territory|scheduling|visit|operations/.test(n)) return 'Operations';
+  if (/it|backup|disaster|cyber|network|technology|infrastructure/.test(n)) return 'Technology & Cybersecurity';
+  if (/lease|vehicle|equipment|property|asset/.test(n)) return 'Assets & Property';
+  return 'Other';
 }
 
-function renderStoredDocs() {
-  const docs = deal.documents || [];
-  const section = document.getElementById('doc-stored-section');
-  const list = document.getElementById('doc-list');
+function docFileIcon(name) {
+  const ext = (name.split('.').pop() || '').toLowerCase();
+  if (ext === 'pdf') return { icon: '📄', cls: 'dr-doc-icon-pdf' };
+  if (['png','jpg','jpeg','gif','webp'].includes(ext)) return { icon: '🖼', cls: 'dr-doc-icon-img' };
+  if (ext === 'csv') return { icon: '📊', cls: 'dr-doc-icon-csv' };
+  if (ext === 'txt') return { icon: '📝', cls: 'dr-doc-icon-txt' };
+  return { icon: '📁', cls: 'dr-doc-icon-other' };
+}
 
-  if (!docs.length) { section.style.display = 'none'; return; }
-  section.style.display = '';
-  list.innerHTML = docs.map(d => `
-    <div class="doc-item">
-      <span class="doc-item-name">${escHtml(d.name)}</span>
-      <span class="doc-item-meta">${d.summary || ''} · ${new Date(d.uploadedAt).toLocaleDateString()}</span>
-    </div>
-  `).join('');
+function renderDocuments() {
+  renderDataRoom();
+  setupDocDropzone();
+  setupUploadToggle();
+}
+
+function setupUploadToggle() {
+  const toggle = document.getElementById('dr-upload-toggle');
+  const body = document.getElementById('dr-upload-body');
+  const docs = deal.documents || [];
+  // Open by default if no docs yet
+  if (!docs.length) { toggle.classList.add('open'); body.classList.add('open'); }
+  toggle.addEventListener('click', () => {
+    const open = toggle.classList.toggle('open');
+    body.classList.toggle('open', open);
+  });
+}
+
+function renderDataRoom() {
+  const docs = deal.documents || [];
+  const body = document.getElementById('dr-body');
+  const subtitle = document.getElementById('dr-subtitle');
+
+  subtitle.textContent = docs.length
+    ? `${docs.length} document${docs.length !== 1 ? 's' : ''} uploaded`
+    : 'No documents uploaded yet';
+
+  if (!docs.length) {
+    body.innerHTML = `<div class="dr-empty"><div class="dr-empty-icon">🗂</div><div class="dr-empty-text">Upload documents to build your data room.</div></div>`;
+    return;
+  }
+
+  // Group by category
+  const grouped = {};
+  for (const d of docs) {
+    const cat = d.category || 'Other';
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(d);
+  }
+
+  // Order by DOC_CATEGORIES
+  const orderedCats = DOC_CATEGORIES.filter(c => grouped[c]);
+  const extra = Object.keys(grouped).filter(c => !DOC_CATEGORIES.includes(c));
+  const allCats = [...orderedCats, ...extra];
+
+  body.innerHTML = allCats.map(cat => {
+    const items = grouped[cat];
+    const cards = items.map(d => {
+      const { icon, cls } = docFileIcon(d.name);
+      const date = new Date(d.uploadedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      const size = d.size ? `${(d.size/1024).toFixed(0)} KB · ` : '';
+      return `
+        <div class="dr-doc-card">
+          <div class="dr-doc-icon ${cls}">${icon}</div>
+          <div class="dr-doc-body">
+            <div class="dr-doc-name">${escHtml(d.name)}</div>
+            ${d.summary ? `<div class="dr-doc-summary">${escHtml(d.summary)}</div>` : ''}
+            <div class="dr-doc-meta">${size}${date}</div>
+          </div>
+          <div class="dr-doc-actions">
+            <button class="dr-doc-remove" data-doc-id="${escHtml(d.id)}" title="Remove">&times;</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="dr-category-section">
+        <div class="dr-category-header">
+          <span class="dr-category-label">${escHtml(cat)}</span>
+          <span class="dr-category-count">${items.length}</span>
+        </div>
+        ${cards}
+      </div>
+    `;
+  }).join('');
+
+  // Wire remove buttons
+  body.querySelectorAll('.dr-doc-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.docId;
+      deal.documents = (deal.documents || []).filter(d => d.id !== id);
+      // Remove this doc from any checklist item links
+      (deal.diligenceChecklist || []).forEach(item => {
+        if (item.linkedDocs) item.linkedDocs = item.linkedDocs.filter(lid => lid !== id);
+      });
+      saveDeal(deal);
+      renderDataRoom();
+    });
+  });
 }
 
 function setupDocDropzone() {
@@ -2618,14 +2901,44 @@ async function runAnalysis() {
 
     const { commentary, suggestions } = await resp.json();
 
-    // Save doc metadata
+    // Save doc metadata with category + unique id
     const now = new Date().toISOString();
     if (!deal.documents) deal.documents = [];
+    const manualCat = document.getElementById('doc-category-select')?.value;
+    const newDocIds = [];
     docPendingFiles.forEach(f => {
-      deal.documents.push({ name: f.name, size: f.size, uploadedAt: now, summary: 'Analyzed' });
+      const docId = `doc-${Date.now()}-${Math.random().toString(36).slice(2,7)}`;
+      const category = (manualCat && manualCat !== 'auto') ? manualCat : autoDetectCategory(f.name);
+      deal.documents.push({ id: docId, name: f.name, size: f.size, uploadedAt: now, summary: '', category });
+      newDocIds.push(docId);
     });
+
+    // Auto-link docs to checklist items based on suggestions coveredItemIds
+    if (suggestions) {
+      suggestions.forEach(s => {
+        if (s.coveredItemIds && Array.isArray(s.coveredItemIds)) {
+          s.coveredItemIds.forEach(itemId => {
+            const item = (deal.diligenceChecklist || []).find(i => i.id === itemId);
+            if (item) {
+              if (!item.linkedDocs) item.linkedDocs = [];
+              newDocIds.forEach(docId => { if (!item.linkedDocs.includes(docId)) item.linkedDocs.push(docId); });
+            }
+          });
+        }
+      });
+    }
+
+    // Add short summary from commentary to each doc
+    if (commentary) {
+      const shortSummary = commentary.split('\n')[0].slice(0, 120);
+      newDocIds.forEach(docId => {
+        const d = deal.documents.find(x => x.id === docId);
+        if (d) d.summary = shortSummary;
+      });
+    }
+
     saveDeal(deal);
-    renderStoredDocs();
+    renderDataRoom();
 
     // Show commentary — render markdown-lite: bold, paragraphs, numbered lists
     function renderCommentary(text) {
@@ -2675,8 +2988,8 @@ async function runAnalysis() {
           </div>
           <div class="suggestion-desc">${escHtml(s.description)}</div>
           <div class="suggestion-btns">
-            <button class="btn btn-blue" style="font-size:12px;padding:5px 10px;" data-sug-idx="${i}">Apply</button>
-            <button class="btn btn-outline" style="font-size:12px;padding:5px 10px;" onclick="document.getElementById('sug-${i}').remove()">Dismiss</button>
+            <button class="btn btn-blue" style="font-size:13px;padding:5px 10px;" data-sug-idx="${i}">Apply</button>
+            <button class="btn btn-outline" style="font-size:13px;padding:5px 10px;" onclick="document.getElementById('sug-${i}').remove()">Dismiss</button>
           </div>
         </div>
       `).join('')
