@@ -10,6 +10,16 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set in Vercel environment' });
   }
 
+  // Use SSE so the connection stays alive past Vercel's 10s timeout
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+  });
+
+  // Keepalive ping every 5s so the connection isn't dropped
+  const keepalive = setInterval(() => res.write(': ping\n\n'), 5000);
+
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
   const content = [];
@@ -35,7 +45,7 @@ export default async function handler(req, res) {
 
   let contextSummary = '';
   if (dealContext) {
-    const { name, entity, location, summary, financials, flags } = dealContext;
+    const { name, entity, location, summary, financials, flags, checklistItems } = dealContext;
     contextSummary = `\nCurrent deal: ${name || 'this business'}`;
     if (entity) contextSummary += ` (${entity})`;
     if (location) contextSummary += `, ${location}`;
@@ -47,22 +57,26 @@ export default async function handler(req, res) {
     }
     if (financials && financials.periods) {
       const periods = Object.keys(financials.periods).sort();
-      if (periods.length > 0) {
-        const recentPeriods = periods.slice(-3);
-        recentPeriods.forEach(period => {
-          const p = financials.periods[period];
-          if (p) {
-            contextSummary += `${period}: Revenue $${(p.revenue || 0).toLocaleString()}`;
-            if (p.operatingIncome != null) contextSummary += `, Op. Income $${p.operatingIncome.toLocaleString()}`;
-            contextSummary += '\n';
-          }
-        });
-      }
+      const recentPeriods = periods.slice(-3);
+      recentPeriods.forEach(period => {
+        const p = financials.periods[period];
+        if (p) {
+          contextSummary += `${period}: Revenue $${(p.revenue || 0).toLocaleString()}`;
+          if (p.operatingIncome != null) contextSummary += `, Op. Income $${p.operatingIncome.toLocaleString()}`;
+          contextSummary += '\n';
+        }
+      });
     }
     if (flags) {
       const redCount = (flags.red || []).length;
       const amberCount = (flags.amber || []).length;
       contextSummary += `Current flags: ${redCount} red, ${amberCount} amber\n`;
+    }
+    if (checklistItems && checklistItems.length) {
+      contextSummary += `\nDiligence checklist items (id | name | category):\n`;
+      checklistItems.forEach(i => {
+        contextSummary += `${i.id} | ${i.item} | ${i.category}\n`;
+      });
     }
   }
 
@@ -83,12 +97,14 @@ Then output a JSON block of suggestions using exactly this format:
     "targetId": "narrative-brief|narrative-headline|narrative-forward",
     "section": "human-readable section name",
     "description": "one-line description of the change",
-    "newContent": "full updated paragraph HTML to replace the current content of the target block"
+    "newContent": "full updated paragraph HTML to replace the current content of the target block",
+    "coveredItemIds": ["3.01", "3.02"]
   }
 ]
 </suggestions>
 
 Valid targetId values: "narrative-brief", "narrative-headline", "narrative-forward".
+coveredItemIds should list the checklist item IDs (e.g. "3.01") that this document provides evidence for.
 Only include suggestions where the document provides clear evidence for a specific change. Keep the writing style consistent with the existing report: concise, analytical, no fluff.`
   });
 
@@ -99,6 +115,8 @@ Only include suggestions where the document provides clear evidence for a specif
       messages: [{ role: 'user', content }]
     });
 
+    clearInterval(keepalive);
+
     const text = response.content[0].text;
 
     let suggestions = [];
@@ -108,8 +126,11 @@ Only include suggestions where the document provides clear evidence for a specif
     }
 
     const commentary = text.replace(/<suggestions>[\s\S]*?<\/suggestions>/, '').trim();
-    res.json({ commentary, suggestions });
+    res.write(`data: ${JSON.stringify({ commentary, suggestions })}\n\n`);
+    res.end();
   } catch (e) {
-    res.status(500).json({ error: e.message });
+    clearInterval(keepalive);
+    res.write(`data: ${JSON.stringify({ error: e.message })}\n\n`);
+    res.end();
   }
 }

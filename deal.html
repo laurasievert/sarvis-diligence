@@ -2916,11 +2916,31 @@ async function runAnalysis() {
     });
 
     if (!resp.ok) {
-      const err = await resp.json();
-      throw new Error(err.error || 'Analysis failed');
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error || `Server error ${resp.status}`);
     }
 
-    const { commentary, suggestions } = await resp.json();
+    // Read SSE stream — server sends keepalive pings then a final data: {...} event
+    statusEl.textContent = 'Analyzing… (this may take 20–30 seconds)';
+    const reader = resp.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let result = null;
+    while (!result) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const parts = buffer.split('\n\n');
+      buffer = parts.pop(); // keep incomplete last chunk
+      for (const part of parts) {
+        if (part.startsWith('data: ')) {
+          result = JSON.parse(part.slice(6));
+        }
+      }
+    }
+    if (!result) throw new Error('No response from server');
+    if (result.error) throw new Error(result.error);
+    const { commentary, suggestions } = result;
 
     // Save doc metadata with category + unique id
     const now = new Date().toISOString();
