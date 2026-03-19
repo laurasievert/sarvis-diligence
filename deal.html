@@ -2949,7 +2949,6 @@ async function runAnalysis() {
     summary: deal.summary,
     financials: deal.financials ? { periods: deal.financials.periods } : undefined,
     flags: deal.flags,
-    narratives: deal.narratives,
     market: deal.market ? { description: deal.market.description, tam: deal.market.tam } : undefined,
     checklistItems: (deal.diligenceChecklist || []).map(i => ({ id: i.id, item: i.item, category: i.category })),
   };
@@ -2961,19 +2960,24 @@ async function runAnalysis() {
       fileData: { name: f.name, mediaType: getMediaType(f), data: await readFileAsBase64(f) }
     })));
 
-    // Call /api/analyze once per file in parallel
+    // Call /api/analyze once per file in parallel; each has its own try/catch
     const results = await Promise.all(fileObjs.map(async ({ file, fileData }) => {
-      const resp = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ file: fileData, dealContext })
-      });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        return { file, result: { summary: err.error || `Error ${resp.status}`, findings: [], flags: [{ type: 'red', text: err.error || `Server error ${resp.status}` }], coveredItemIds: [], narrativeSuggestions: [] } };
+      try {
+        const resp = await fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ file: fileData, dealContext })
+        });
+        if (!resp.ok) {
+          const err = await resp.json().catch(() => ({}));
+          const msg = err.error || `Server error ${resp.status}`;
+          return { file, result: { summary: `Could not analyze ${file.name}: ${msg}`, findings: [], flags: [{ type: 'red', text: msg }], coveredItemIds: [], narrativeSuggestions: [] } };
+        }
+        const result = await resp.json();
+        return { file, result };
+      } catch (fetchErr) {
+        return { file, result: { summary: `Network error analyzing ${file.name}: ${fetchErr.message}`, findings: [], flags: [{ type: 'red', text: `Network error: ${fetchErr.message}` }], coveredItemIds: [], narrativeSuggestions: [] } };
       }
-      const result = await resp.json();
-      return { file, result };
     }));
 
     // Save documents to deal with summaries and checklist links
