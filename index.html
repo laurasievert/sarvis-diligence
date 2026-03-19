@@ -4,17 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Darling's Home Care — Acquisition Diligence</title>
-<meta name="description" content="Acquisition diligence report for Darling's Home Care (Darling Apothecary, LLC), Warren, PA. Financial analysis, cost structure, valuation, and market overview.">
+<meta name="description" content="Acquisition diligence report for Darling's Home Care (Darling Apothecary, LLC), Warren, PA.">
 <meta name="robots" content="noindex, nofollow">
-
-<!-- Open Graph -->
 <meta property="og:title" content="Darling's Home Care — Acquisition Diligence">
-<meta property="og:description" content="Financial analysis, diligence flags, valuation matrix, and market overview for Darling Apothecary, LLC — Warren, PA.">
 <meta property="og:type" content="website">
-
-<!-- Favicon (inline SVG as data URI) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1a18'/><text y='22' x='5' font-size='18' fill='white' font-family='sans-serif' font-weight='bold'>D</text></svg>">
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; }
@@ -43,6 +37,7 @@
   th { text-align: left; color: #73726c; font-weight: 400; padding: 4px 8px 4px 0; border-bottom: 0.5px solid #ddd; }
   td { padding: 5px 8px 5px 0; color: #1a1a18; border-bottom: 0.5px solid #eee; }
   td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .tab-row { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
   .tab { background: #f5f5f0; border: 0.5px solid #ccc; border-radius: 8px; padding: 5px 16px; font-size: 13px; cursor: pointer; color: #73726c; transition: all 0.15s; }
   .tab:hover { background: #eae9e3; }
@@ -50,9 +45,63 @@
   .panel { display: none; }
   .panel.active { display: block; }
   .featured { border: 1.5px solid #185FA5 !important; }
+
+  /* Narrative blocks */
+  .narrative-block { border-radius: 0 8px 8px 0; padding: 0.85rem 1.1rem; margin-bottom: 1rem; }
+  .narrative-block .block-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; }
+  .narrative-block p { margin: 0 0 8px; font-size: 14px; line-height: 1.7; color: #1a1a18; }
+  .narrative-block p:last-child { margin-bottom: 0; }
+  .nb-blue { border-left: 3px solid #185FA5; background: #f0f6fd; }
+  .nb-blue .block-label { color: #185FA5; }
+  .nb-green { border-left: 3px solid #1D9E75; background: #f0faf5; }
+  .nb-green .block-label { color: #0F6E56; }
+  .nb-amber { border-left: 3px solid #BA7517; background: #fdf6ea; }
+  .nb-amber .block-label { color: #854F0B; }
+
+  /* Chat FAB */
+  #chat-fab { position: fixed; bottom: 24px; right: 24px; width: 48px; height: 48px; border-radius: 50%; background: #1a1a18; color: #fff; border: none; cursor: pointer; font-size: 20px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 12px rgba(0,0,0,0.25); z-index: 1000; transition: transform 0.15s; }
+  #chat-fab:hover { transform: scale(1.05); }
+  #chat-panel { position: fixed; bottom: 84px; right: 24px; width: 360px; background: #fff; border-radius: 12px; border: 0.5px solid #ddd; box-shadow: 0 4px 24px rgba(0,0,0,0.14); z-index: 1000; display: none; flex-direction: column; overflow: hidden; }
+  #chat-panel.open { display: flex; }
+  #chat-header { padding: 12px 16px; border-bottom: 0.5px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+  #chat-header span { font-size: 13px; font-weight: 600; }
+  #chat-close { background: none; border: none; cursor: pointer; font-size: 16px; color: #73726c; padding: 0; }
+  #chat-messages { overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; min-height: 200px; max-height: 320px; }
+  .chat-msg { font-size: 13px; line-height: 1.55; padding: 8px 11px; border-radius: 8px; max-width: 88%; white-space: pre-wrap; }
+  .chat-msg.user { background: #1a1a18; color: #fff; align-self: flex-end; }
+  .chat-msg.assistant { background: #f5f5f0; color: #1a1a18; align-self: flex-start; }
+  .chat-msg.loading { color: #73726c; font-style: italic; }
+  #chat-input-row { padding: 10px 12px; border-top: 0.5px solid #eee; display: flex; gap: 6px; }
+  #chat-input { flex: 1; font-size: 13px; border: 0.5px solid #ccc; border-radius: 6px; padding: 7px 10px; outline: none; font-family: inherit; }
+  #chat-input:focus { border-color: #1a1a18; }
+  #chat-send { background: #1a1a18; color: #fff; border: none; border-radius: 6px; padding: 7px 14px; font-size: 13px; cursor: pointer; white-space: nowrap; }
+  #chat-send:disabled { opacity: 0.5; cursor: default; }
+
+  /* Documents tab */
+  .dropzone { border: 1.5px dashed #ccc; border-radius: 8px; padding: 2rem 1.5rem; text-align: center; cursor: pointer; transition: all 0.15s; background: #fafaf8; }
+  .dropzone:hover, .dropzone.drag-over { border-color: #185FA5; background: #f0f6fd; }
+  .dropzone-label { font-size: 14px; color: #1a1a18; font-weight: 500; margin-bottom: 4px; }
+  .dropzone-sub { font-size: 12px; color: #73726c; }
+  #file-input { display: none; }
+  .file-list { list-style: none; padding: 0; margin: 10px 0 0; display: flex; flex-direction: column; gap: 4px; }
+  .file-item { display: flex; align-items: center; justify-content: space-between; background: #f5f5f0; border-radius: 6px; padding: 7px 10px; font-size: 13px; }
+  .file-remove { background: none; border: none; cursor: pointer; color: #73726c; font-size: 16px; line-height: 1; padding: 0 2px; }
+  .analyze-btn { margin-top: 12px; background: #1a1a18; color: #fff; border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; cursor: pointer; font-family: inherit; }
+  .analyze-btn:disabled { opacity: 0.5; cursor: default; }
+  .analysis-commentary { background: #f5f5f0; border-radius: 8px; padding: 1rem 1.1rem; font-size: 14px; line-height: 1.7; color: #1a1a18; white-space: pre-wrap; margin-bottom: 12px; }
+  .suggestion-card { background: #f5f5f0; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; }
+  .suggestion-card label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
+  .suggestion-card input[type=checkbox] { margin-top: 2px; flex-shrink: 0; }
+  .s-section { font-size: 11px; color: #73726c; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+  .s-desc { font-size: 13px; color: #1a1a18; }
+  .apply-btn { margin-top: 12px; background: #0F6E56; color: #fff; border: none; border-radius: 8px; padding: 9px 20px; font-size: 13px; cursor: pointer; font-family: inherit; }
+  .apply-btn:disabled { opacity: 0.5; cursor: default; }
+  .doc-status { font-size: 13px; color: #73726c; margin-top: 10px; font-style: italic; }
+
   @media (max-width: 600px) {
     .metric-grid, .metric-grid-3 { grid-template-columns: 1fr 1fr; }
     .wrap { padding: 16px; }
+    #chat-panel { width: calc(100vw - 32px); right: 16px; }
   }
 </style>
 </head>
@@ -68,31 +117,11 @@
     <div class="tab" onclick="showTab('flags', this)">Diligence Flags</div>
     <div class="tab" onclick="showTab('valuation', this)">Valuation</div>
     <div class="tab" onclick="showTab('market', this)">Market</div>
+    <div class="tab" onclick="showTab('documents', this)">Documents</div>
   </div>
 
   <!-- OVERVIEW -->
   <div id="tab-overview" class="panel active">
-
-    <div style="border-left:3px solid #185FA5;padding:0.75rem 1rem;margin-bottom:1.25rem;background:#f0f6fd;border-radius:0 8px 8px 0">
-      <div style="font-size:11px;font-weight:600;color:#185FA5;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">The business in brief</div>
-      <p style="margin:0 0 6px;font-size:13px;line-height:1.65;color:#1a1a18">Darling's Home Care (operating under Darling Apothecary, LLC) is a pure-service home care business headquartered in Warren, PA. The company provides in-home personal care services — predominantly to seniors — in one of the most age-heavy counties in Pennsylvania. With essentially zero cost of goods, the model is entirely labor-driven: wages and payroll taxes consume roughly 78–80% of revenue, leaving margin expansion as a function of billing rate growth, labor efficiency, and overhead control.</p>
-      <p style="margin:0;font-size:13px;line-height:1.65;color:#1a1a18">The company operates on a cash basis and all revenue flows through a single non-taxable sales line, which is consistent with Medicaid and waiver-funded home care billing in PA. The absence of a revenue breakdown by payer is the most significant information gap at this stage of diligence.</p>
-    </div>
-
-    <div style="border-left:3px solid #1D9E75;padding:0.75rem 1rem;margin-bottom:1.25rem;background:#f0faf5;border-radius:0 8px 8px 0">
-      <div style="font-size:11px;font-weight:600;color:#0F6E56;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">The headline story</div>
-      <p style="margin:0 0 6px;font-size:13px;line-height:1.65;color:#1a1a18">This business lost money at the operating line as recently as 2024 — then swung to $216K in operating income in 2025, a <strong>$240K improvement on only $208K of additional revenue</strong>. That math tells you this was a cost story, not a top-line story. Rent dropped ~$30K, car expenses dropped ~$19K, software/IT dropped ~$14.5K, and insurance dropped ~$9K. Together those four lines account for nearly the entire margin recovery.</p>
-      <p style="margin:0 0 6px;font-size:13px;line-height:1.65;color:#1a1a18">The critical question is whether those cost reductions are durable or whether some portion will need to be re-established post-acquisition (particularly rent, which has effectively gone to zero — suggesting the owner may be running the operation from their home or a personally-owned space).</p>
-      <p style="margin:0;font-size:13px;line-height:1.65;color:#1a1a18"><strong>2026 is pacing ahead of 2025</strong> on both revenue and margin: $364K in the first ~2.5 months implies a ~$1.74M annualized run rate at a 17.9% operating margin — up from 11.9% for full-year 2025. If the margin trend holds, annualized EBITDA for 2026 could approach $310–320K before any owner add-backs, which would meaningfully strengthen the valuation case versus the 2025 base.</p>
-    </div>
-
-    <div style="border-left:3px solid #BA7517;padding:0.75rem 1rem;margin-bottom:1.5rem;background:#fdf6ea;border-radius:0 8px 8px 0">
-      <div style="font-size:11px;font-weight:600;color:#854F0B;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px">Going-forward narrative</div>
-      <p style="margin:0 0 6px;font-size:13px;line-height:1.65;color:#1a1a18">The structural demand picture is favorable: Warren County's median age is 47.4 with nearly 24% of residents age 65 or older — well above state and national averages — and rural PA is adding ~44,000 new seniors per year through 2028. Thin documented competition in the immediate market (roughly 3–6 licensed agencies per public directories) suggests Darling's holds meaningful local positioning.</p>
-      <p style="margin:0 0 6px;font-size:13px;line-height:1.65;color:#1a1a18">The primary risk is not demand — it is <strong>caregiver supply</strong>. Rural, declining-population markets face a structural labor shortage in direct care workers, and this business is entirely dependent on its ability to recruit and retain aides. Turnover costs, recruiting spend, and overtime risk are the operational variables that will define whether the 2025–2026 margin expansion is sustainable or fragile.</p>
-      <p style="margin:0;font-size:13px;line-height:1.65;color:#1a1a18">A buyer with operational infrastructure — scheduling systems, caregiver retention programs, referral network development — could drive meaningful upside from the current base. A passive buyer running it as-is takes on the same workforce risk the current owner is managing. Underwriting should stress-test the P&L at 5–10% higher labor costs to establish a downside floor.</p>
-    </div>
-
     <div class="section-title">Revenue</div>
     <div class="metric-grid">
       <div class="card"><div class="label">2024 Full Year</div><div class="val">$1.62M</div><div class="sub">Annual revenue</div></div>
@@ -120,6 +149,27 @@
       <div class="card"><div class="label">2025 Wages</div><div class="val">$1.24M</div><div class="sub">67.8% of revenue</div></div>
       <div class="card"><div class="label">2026 YTD Wages</div><div class="val">$234K</div><div class="sub">64.1% of revenue</div></div>
       <div class="card"><div class="label">Total Labor w/ taxes</div><div class="val">~80%</div><div class="sub">Incl. FICA/PAUC/FUTA</div></div>
+    </div>
+
+    <div class="section-title" style="margin-top:1.6rem">Analysis</div>
+
+    <div id="narrative-brief" class="narrative-block nb-blue">
+      <div class="block-label">The business in brief</div>
+      <p>Darling's is a pure-service operation in Warren, PA — essentially all revenue, zero COGS. The model is entirely labor-driven: wages and payroll taxes run ~78–80% of revenue, making margin a function of billing rates, labor efficiency, and overhead control.</p>
+      <p>All revenue flows through a single non-taxable sales line consistent with Medicaid and waiver billing. The absence of a payer breakdown is the most significant information gap at this stage.</p>
+    </div>
+
+    <div id="narrative-headline" class="narrative-block nb-green">
+      <div class="block-label">The headline story</div>
+      <p>The business lost money at the operating line in 2024, then swung to $216K operating income in 2025 — a $240K improvement on only $208K of additional revenue. That's a cost story: rent –$30K, car expenses –$19K, software/IT –$14.5K, insurance –$9K account for nearly the entire margin recovery.</p>
+      <p>The critical question is whether those reductions are durable post-acquisition — particularly rent, which has dropped to effectively zero, suggesting the owner may be operating out of a personally-owned or home office space.</p>
+      <p><strong>2026 is pacing ahead:</strong> $364K in ~2.5 months implies a ~$1.74M annualized run rate at 17.9% operating margin. If the trend holds, annualized EBITDA approaches $310–320K before add-backs.</p>
+    </div>
+
+    <div id="narrative-forward" class="narrative-block nb-amber">
+      <div class="block-label">Going-forward narrative</div>
+      <p>Demand is structural: Warren County's 23.7% age 65+ is nearly 50% above the national average, with ~44,000 rural Pennsylvanians turning 65 annually through 2028. Thin documented competition (~3–6 licensed agencies) suggests strong local positioning.</p>
+      <p>The primary risk is caregiver supply, not demand. Rural, declining-population markets face a structural direct care workforce shortage — turnover costs, recruiting spend, and overtime exposure will determine whether the 2025–2026 margin expansion holds. Stress-test the P&amp;L at 5–10% higher labor costs to establish your downside floor.</p>
     </div>
   </div>
 
@@ -149,19 +199,21 @@
       <div style="position:relative;height:260px"><canvas id="costChart"></canvas></div>
     </div>
     <div class="section-title" style="margin-top:1rem">Expense detail — year over year</div>
-    <table>
-      <tr><th>Line item</th><th class="num">2024</th><th class="num">2025</th><th class="num">Change</th></tr>
-      <tr><td>Wages &amp; salaries</td><td class="num">$1,193,572</td><td class="num">$1,236,817</td><td class="num pos">+$43K</td></tr>
-      <tr><td>FICA taxes</td><td class="num">$89,451</td><td class="num">$91,772</td><td class="num">+$2.3K</td></tr>
-      <tr><td>Software / IT</td><td class="num">$132,546</td><td class="num">$118,024</td><td class="num pos">–$14.5K</td></tr>
-      <tr><td>Car expenses</td><td class="num">$57,492</td><td class="num">$38,234</td><td class="num pos">–$19.3K</td></tr>
-      <tr><td>Insurance</td><td class="num">$23,430</td><td class="num">$14,487</td><td class="num pos">–$8.9K</td></tr>
-      <tr><td>Pension</td><td class="num">$20,055</td><td class="num">$16,804</td><td class="num pos">–$3.3K</td></tr>
-      <tr><td>Rent</td><td class="num">$29,917</td><td class="num">$322</td><td class="num neg">–$29.6K ⚠</td></tr>
-      <tr><td>Medical supplies</td><td class="num">$11,548</td><td class="num">$15,881</td><td class="num neg">+$4.3K</td></tr>
-      <tr><td>Employee benefits</td><td class="num">$1,549</td><td class="num">$23,489</td><td class="num neg">+$21.9K ⚠</td></tr>
-      <tr><td>Interest expense</td><td class="num">$4,394</td><td class="num">$21,167</td><td class="num neg">+$16.8K ⚠</td></tr>
-    </table>
+    <div class="table-scroll">
+      <table>
+        <tr><th>Line item</th><th class="num">2024</th><th class="num">2025</th><th class="num">Change</th></tr>
+        <tr><td>Wages &amp; salaries</td><td class="num">$1,193,572</td><td class="num">$1,236,817</td><td class="num pos">+$43K</td></tr>
+        <tr><td>FICA taxes</td><td class="num">$89,451</td><td class="num">$91,772</td><td class="num">+$2.3K</td></tr>
+        <tr><td>Software / IT</td><td class="num">$132,546</td><td class="num">$118,024</td><td class="num pos">–$14.5K</td></tr>
+        <tr><td>Car expenses</td><td class="num">$57,492</td><td class="num">$38,234</td><td class="num pos">–$19.3K</td></tr>
+        <tr><td>Insurance</td><td class="num">$23,430</td><td class="num">$14,487</td><td class="num pos">–$8.9K</td></tr>
+        <tr><td>Pension</td><td class="num">$20,055</td><td class="num">$16,804</td><td class="num pos">–$3.3K</td></tr>
+        <tr><td>Rent</td><td class="num">$29,917</td><td class="num">$322</td><td class="num neg">–$29.6K ⚠</td></tr>
+        <tr><td>Medical supplies</td><td class="num">$11,548</td><td class="num">$15,881</td><td class="num neg">+$4.3K</td></tr>
+        <tr><td>Employee benefits</td><td class="num">$1,549</td><td class="num">$23,489</td><td class="num neg">+$21.9K ⚠</td></tr>
+        <tr><td>Interest expense</td><td class="num">$4,394</td><td class="num">$21,167</td><td class="num neg">+$16.8K ⚠</td></tr>
+      </table>
+    </div>
     <div class="section-title" style="margin-top:1rem">Watch items</div>
     <ul class="flag-list">
       <li class="amber"><span class="flag-icon">!</span><b>Rent:</b> Dropped from $29.9K to $322 — major change. Was the lease terminated, space relocated, or sublease income netting against it?</li>
@@ -175,136 +227,139 @@
   <div id="tab-flags" class="panel">
     <div class="section-title">Red flags — requires resolution</div>
     <ul class="flag-list">
-      <li class="red"><span class="flag-icon">✕</span><b>Revenue concentration unknown.</b> All revenue classified as "Sales – Non-taxable" with no client breakdown. Home care businesses frequently have 1–3 large payers (Medicaid, Medicare, managed care). Concentration risk is unquantifiable without payer/client detail.</li>
-      <li class="red"><span class="flag-icon">✕</span><b>Cash basis accounting.</b> All statements are cash basis — accrued revenue, unbilled services, and accounts receivable are invisible. A home care company can have significant AR (30–90 day Medicaid billing cycles). Request accrual-basis or bank statements to validate.</li>
-      <li class="red"><span class="flag-icon">✕</span><b>Operating loss in 2024.</b> The business lost money at the operating line as recently as FY2024. The 2025 turnaround needs a clear explanation — is it sustainable or driven by temporary factors?</li>
+      <li class="red"><span class="flag-icon">✕</span><b>Revenue concentration unknown.</b> All revenue classified as "Sales – Non-taxable" with no client breakdown. Concentration risk is unquantifiable without payer/client detail.</li>
+      <li class="red"><span class="flag-icon">✕</span><b>Cash basis accounting.</b> All statements are cash basis — accrued revenue, unbilled services, and AR are invisible. Request accrual-basis or bank statements to validate.</li>
+      <li class="red"><span class="flag-icon">✕</span><b>Operating loss in 2024.</b> The business lost money at the operating line as recently as FY2024. The 2025 turnaround needs a clear explanation — sustainable or driven by temporary factors?</li>
       <li class="red"><span class="flag-icon">✕</span><b>One-time items boosted 2024 net income.</b> $34.7K gain on asset sales in 2024 turned an operating loss into nominal profitability. Without it: net loss of ~$28K.</li>
-      <li class="red"><span class="flag-icon">✕</span><b>Uncategorized/ask-my-accountant entries.</b> Multiple years contain "Uncategorized Expenses," "Ask My Accountant," and "Uncategorized Income" — signs of bookkeeping gaps. These need to be reclassified before relying on the P&L.</li>
+      <li class="red"><span class="flag-icon">✕</span><b>Uncategorized / ask-my-accountant entries.</b> Multiple years contain "Uncategorized Expenses," "Ask My Accountant," and "Uncategorized Income" — signs of bookkeeping gaps that must be reclassified.</li>
     </ul>
     <div class="section-title">Amber flags — needs explanation</div>
     <ul class="flag-list">
-      <li class="amber"><span class="flag-icon">!</span><b>Rent collapse.</b> Rent went from $29.9K (2024) to $322 (2025) to $0 (2026 YTD). Working out of owner's home? Lease expired? Sublease? Critical for understanding ongoing occupancy costs post-acquisition.</li>
+      <li class="amber"><span class="flag-icon">!</span><b>Rent collapse.</b> Rent: $29.9K (2024) → $322 (2025) → $0 (2026 YTD). Working out of owner's home? Lease expired? Critical for understanding occupancy costs post-acquisition.</li>
       <li class="amber"><span class="flag-icon">!</span><b>Rising interest expense.</b> Interest jumped from $4.4K (2024) to $21.2K (2025). Obtain a full debt schedule — balance, rate, maturity, and whether debt transfers at close.</li>
-      <li class="amber"><span class="flag-icon">!</span><b>Software/IT at $118–132K/year.</b> This is 6–8% of revenue — very high for a home care operation. What platforms drive this? EVV software, billing, scheduling? Is any of it transferable or terminable?</li>
-      <li class="amber"><span class="flag-icon">!</span><b>Employee benefits surge.</b> Benefits jumped 15× year-over-year with no explanation visible in the P&L.</li>
-      <li class="amber"><span class="flag-icon">!</span><b>Owner compensation / add-backs not visible.</b> Need to determine what the owner is paying themselves to calculate true SDE/adjusted EBITDA.</li>
-      <li class="amber"><span class="flag-icon">!</span><b>Car expenses ($38–57K/yr).</b> Large vehicle line — separate personal-use components from business reimbursement.</li>
-      <li class="amber"><span class="flag-icon">!</span><b>Licensing and regulatory.</b> PA home care businesses require state licensure and may participate in Medicaid. Confirm license is in good standing and transferable.</li>
+      <li class="amber"><span class="flag-icon">!</span><b>Software/IT at $118–132K/year.</b> 6–8% of revenue — high for this business size. What platforms drive this? EVV, billing, scheduling? Is any of it transferable or terminable?</li>
+      <li class="amber"><span class="flag-icon">!</span><b>Employee benefits surge.</b> Benefits jumped 15× year-over-year with no visible explanation.</li>
+      <li class="amber"><span class="flag-icon">!</span><b>Owner compensation / add-backs not visible.</b> Need owner salary detail to calculate true SDE/adjusted EBITDA.</li>
+      <li class="amber"><span class="flag-icon">!</span><b>Car expenses ($38–57K/yr).</b> Separate personal-use components from business reimbursement.</li>
+      <li class="amber"><span class="flag-icon">!</span><b>Licensing and regulatory.</b> Confirm PA DOH license is in good standing and transferable.</li>
     </ul>
     <div class="section-title">Green — positive signals</div>
     <ul class="flag-list">
-      <li class="green"><span class="flag-icon">✓</span>Strong revenue growth trajectory: 13% YoY in 2025 and 2026 pacing ahead.</li>
-      <li class="green"><span class="flag-icon">✓</span>Margins expanding — operating margin moved from –1.5% → 11.9% → 17.9% YTD.</li>
-      <li class="green"><span class="flag-icon">✓</span>Near-zero COGS — pure service business with no inventory risk.</li>
-      <li class="green"><span class="flag-icon">✓</span>Labor as a % of revenue is declining (73.8% → 67.8% → 64.1%) — improving labor efficiency.</li>
+      <li class="green"><span class="flag-icon">✓</span>Strong revenue growth: 13% YoY in 2025 and 2026 pacing ahead.</li>
+      <li class="green"><span class="flag-icon">✓</span>Margins expanding — operating margin: –1.5% → 11.9% → 17.9% YTD.</li>
+      <li class="green"><span class="flag-icon">✓</span>Near-zero COGS — pure service model with no inventory risk.</li>
+      <li class="green"><span class="flag-icon">✓</span>Labor as % of revenue declining (73.8% → 67.8% → 64.1%) — improving efficiency.</li>
       <li class="green"><span class="flag-icon">✓</span>No reported bad debt or returns/allowances in 2025–2026.</li>
     </ul>
   </div>
 
   <!-- VALUATION -->
   <div id="tab-valuation" class="panel">
-
     <div class="section-title">Adjusted EBITDA bridge — edit assumptions</div>
     <div style="background:#f5f5f0;border-radius:8px;padding:1rem 1.25rem;margin-bottom:12px">
       <div style="font-size:12px;color:#73726c;margin-bottom:10px">All figures in $. Edit any line to recalculate valuation below.</div>
-      <table style="font-size:13px">
-        <tr>
-          <th style="width:55%">Line item</th>
-          <th class="num" style="width:20%">Amount ($)</th>
-          <th style="width:25%;padding-left:8px;color:#73726c;font-weight:400;font-size:12px">Notes</th>
-        </tr>
-        <tr>
-          <td>2025 net income (reported)</td>
-          <td class="num"><input id="v_netincome" type="number" value="195421" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
-          <td style="padding-left:8px;font-size:12px;color:#73726c">From P&L</td>
-        </tr>
-        <tr>
-          <td>+ Interest expense add-back</td>
-          <td class="num"><input id="v_interest" type="number" value="21167" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
-          <td style="padding-left:8px;font-size:12px;color:#73726c">From P&L</td>
-        </tr>
-        <tr>
-          <td>+ Owner compensation add-back</td>
-          <td class="num"><input id="v_ownerwages" type="number" value="0" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
-          <td style="padding-left:8px;font-size:12px;color:#73726c">Verify with seller</td>
-        </tr>
-        <tr>
-          <td>+ Personal car expense add-back</td>
-          <td class="num"><input id="v_car" type="number" value="0" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
-          <td style="padding-left:8px;font-size:12px;color:#73726c">% of $38K car line</td>
-        </tr>
-        <tr>
-          <td>+ Other one-time / non-recurring add-backs</td>
-          <td class="num"><input id="v_other" type="number" value="0" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
-          <td style="padding-left:8px;font-size:12px;color:#73726c">e.g. legal, recruiting</td>
-        </tr>
-        <tr>
-          <td>– Normalized owner replacement salary</td>
-          <td class="num"><input id="v_replace" type="number" value="0" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
-          <td style="padding-left:8px;font-size:12px;color:#73726c">Cost to replace mgmt</td>
-        </tr>
-        <tr>
-          <td>– Normalized rent / occupancy cost</td>
-          <td class="num"><input id="v_rent" type="number" value="0" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
-          <td style="padding-left:8px;font-size:12px;color:#73726c">Rent dropped to $322</td>
-        </tr>
-        <tr style="font-weight:600;border-top:1px solid #ccc">
-          <td style="padding-top:8px">Adjusted EBITDA</td>
-          <td class="num" style="padding-top:8px"><span id="v_ebitda" style="font-size:15px;font-weight:600;color:#0F6E56">$216,588</span></td>
-          <td style="padding-left:8px;font-size:12px;color:#73726c;padding-top:8px">Auto-calculated</td>
-        </tr>
-      </table>
+      <div class="table-scroll">
+        <table style="font-size:13px">
+          <tr>
+            <th style="width:55%">Line item</th>
+            <th class="num" style="width:20%">Amount ($)</th>
+            <th style="width:25%;padding-left:8px;color:#73726c;font-weight:400;font-size:12px">Notes</th>
+          </tr>
+          <tr>
+            <td>2025 net income (reported)</td>
+            <td class="num"><input id="v_netincome" type="number" value="195421" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
+            <td style="padding-left:8px;font-size:12px;color:#73726c">From P&L</td>
+          </tr>
+          <tr>
+            <td>+ Interest expense add-back</td>
+            <td class="num"><input id="v_interest" type="number" value="21167" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
+            <td style="padding-left:8px;font-size:12px;color:#73726c">From P&L</td>
+          </tr>
+          <tr>
+            <td>+ Owner compensation add-back</td>
+            <td class="num"><input id="v_ownerwages" type="number" value="0" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
+            <td style="padding-left:8px;font-size:12px;color:#73726c">Verify with seller</td>
+          </tr>
+          <tr>
+            <td>+ Personal car expense add-back</td>
+            <td class="num"><input id="v_car" type="number" value="0" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
+            <td style="padding-left:8px;font-size:12px;color:#73726c">% of $38K car line</td>
+          </tr>
+          <tr>
+            <td>+ Other one-time / non-recurring add-backs</td>
+            <td class="num"><input id="v_other" type="number" value="0" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
+            <td style="padding-left:8px;font-size:12px;color:#73726c">e.g. legal, recruiting</td>
+          </tr>
+          <tr>
+            <td>– Normalized owner replacement salary</td>
+            <td class="num"><input id="v_replace" type="number" value="0" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
+            <td style="padding-left:8px;font-size:12px;color:#73726c">Cost to replace mgmt</td>
+          </tr>
+          <tr>
+            <td>– Normalized rent / occupancy cost</td>
+            <td class="num"><input id="v_rent" type="number" value="0" oninput="calcVal()" style="width:110px;text-align:right;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff"></td>
+            <td style="padding-left:8px;font-size:12px;color:#73726c">Rent dropped to $322</td>
+          </tr>
+          <tr style="font-weight:600;border-top:1px solid #ccc">
+            <td style="padding-top:8px">Adjusted EBITDA</td>
+            <td class="num" style="padding-top:8px"><span id="v_ebitda" style="font-size:15px;font-weight:600;color:#0F6E56">$216,588</span></td>
+            <td style="padding-left:8px;font-size:12px;color:#73726c;padding-top:8px">Auto-calculated</td>
+          </tr>
+        </table>
+      </div>
       <div style="margin-top:8px">
         <button onclick="resetVal()" style="font-size:12px;padding:4px 12px;border:0.5px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;color:#73726c">Reset to defaults</button>
       </div>
     </div>
 
     <div class="section-title">Valuation matrix — market range multiples</div>
-    <table id="val-matrix" style="font-size:13px">
-      <tr>
-        <th>Multiple</th>
-        <th class="num">Enterprise value</th>
-        <th class="num">Less: est. debt</th>
-        <th class="num">Equity value</th>
-        <th style="padding-left:8px">Context</th>
-      </tr>
-      <tr>
-        <td>3.0×</td>
-        <td class="num" id="ev30">—</td>
-        <td class="num" id="debt30">—</td>
-        <td class="num" id="eq30">—</td>
-        <td style="padding-left:8px;font-size:12px;color:#73726c">Distressed / risk floor</td>
-      </tr>
-      <tr style="background:#EAF3DE">
-        <td><b>4.0×</b></td>
-        <td class="num" id="ev40">—</td>
-        <td class="num" id="debt40">—</td>
-        <td class="num" id="eq40">—</td>
-        <td style="padding-left:8px;font-size:12px;color:#27500A">Market low — rural PA</td>
-      </tr>
-      <tr style="background:#EAF3DE">
-        <td><b>4.5×</b></td>
-        <td class="num" id="ev45">—</td>
-        <td class="num" id="debt45">—</td>
-        <td class="num" id="eq45">—</td>
-        <td style="padding-left:8px;font-size:12px;color:#27500A">Mid-market — likely range</td>
-      </tr>
-      <tr style="background:#EAF3DE">
-        <td><b>5.0×</b></td>
-        <td class="num" id="ev50">—</td>
-        <td class="num" id="debt50">—</td>
-        <td class="num" id="eq50">—</td>
-        <td style="padding-left:8px;font-size:12px;color:#27500A">Market high — clean deal</td>
-      </tr>
-      <tr>
-        <td>6.0×</td>
-        <td class="num" id="ev60">—</td>
-        <td class="num" id="debt60">—</td>
-        <td class="num" id="eq60">—</td>
-        <td style="padding-left:8px;font-size:12px;color:#73726c">Optimistic / Medicaid premium</td>
-      </tr>
-    </table>
-    <div style="display:flex;align-items:center;gap:12px;margin-top:10px;margin-bottom:4px">
+    <div class="table-scroll">
+      <table id="val-matrix" style="font-size:13px">
+        <tr>
+          <th>Multiple</th>
+          <th class="num">Enterprise value</th>
+          <th class="num">Less: est. debt</th>
+          <th class="num">Equity value</th>
+          <th style="padding-left:8px">Context</th>
+        </tr>
+        <tr>
+          <td>3.0×</td>
+          <td class="num" id="ev30">—</td>
+          <td class="num" id="debt30">—</td>
+          <td class="num" id="eq30">—</td>
+          <td style="padding-left:8px;font-size:12px;color:#73726c">Distressed / risk floor</td>
+        </tr>
+        <tr style="background:#EAF3DE">
+          <td><b>4.0×</b></td>
+          <td class="num" id="ev40">—</td>
+          <td class="num" id="debt40">—</td>
+          <td class="num" id="eq40">—</td>
+          <td style="padding-left:8px;font-size:12px;color:#27500A">Market low — rural PA</td>
+        </tr>
+        <tr style="background:#EAF3DE">
+          <td><b>4.5×</b></td>
+          <td class="num" id="ev45">—</td>
+          <td class="num" id="debt45">—</td>
+          <td class="num" id="eq45">—</td>
+          <td style="padding-left:8px;font-size:12px;color:#27500A">Mid-market — likely range</td>
+        </tr>
+        <tr style="background:#EAF3DE">
+          <td><b>5.0×</b></td>
+          <td class="num" id="ev50">—</td>
+          <td class="num" id="debt50">—</td>
+          <td class="num" id="eq50">—</td>
+          <td style="padding-left:8px;font-size:12px;color:#27500A">Market high — clean deal</td>
+        </tr>
+        <tr>
+          <td>6.0×</td>
+          <td class="num" id="ev60">—</td>
+          <td class="num" id="debt60">—</td>
+          <td class="num" id="eq60">—</td>
+          <td style="padding-left:8px;font-size:12px;color:#73726c">Optimistic / Medicaid premium</td>
+        </tr>
+      </table>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:10px;margin-bottom:4px;flex-wrap:wrap">
       <label style="font-size:12px;color:#73726c;white-space:nowrap">Estimated debt at close ($):</label>
       <input id="v_debt" type="number" value="0" oninput="calcVal()" style="width:120px;font-size:13px;border:0.5px solid #ccc;border-radius:4px;padding:3px 6px;background:#fff">
       <span style="font-size:12px;color:#73726c">(from debt schedule — not yet provided)</span>
@@ -314,7 +369,7 @@
     <ul class="flag-list">
       <li class="amber"><span class="flag-icon">1</span>Payer mix &amp; Medicaid contract transferability — single biggest value lever</li>
       <li class="amber"><span class="flag-icon">2</span>Owner SDE add-backs — actual cash flow may be higher than EBITDA suggests</li>
-      <li class="amber"><span class="flag-icon">3</span>Caregiver retention &amp; turnover rates — typically high churn in home care</li>
+      <li class="amber"><span class="flag-icon">3</span>Caregiver retention &amp; turnover rates — typically high churn</li>
       <li class="amber"><span class="flag-icon">4</span>PA licensure status and any DOH survey history</li>
       <li class="amber"><span class="flag-icon">5</span>Working capital cycle (AR aging if Medicaid billed)</li>
     </ul>
@@ -332,7 +387,6 @@
 
   <!-- MARKET -->
   <div id="tab-market" class="panel">
-
     <div class="section-title">Warren County — Core Market</div>
     <div class="metric-grid">
       <div class="card"><div class="label">County population</div><div class="val">~37,400</div><div class="sub">Declining ~0.8%/yr</div></div>
@@ -342,15 +396,17 @@
     </div>
 
     <div class="section-title">Surrounding Counties within ~45 miles</div>
-    <table>
-      <tr><th>County</th><th class="num">Dist. from Warren</th><th class="num">Population</th><th class="num">Median Age</th><th class="num">65+ Est.</th></tr>
-      <tr><td><b>Warren County</b> (core)</td><td class="num">—</td><td class="num">~37,400</td><td class="num">47.4</td><td class="num">~8,860 (23.7%)</td></tr>
-      <tr><td>Forest County</td><td class="num">~23 mi</td><td class="num">~6,450</td><td class="num">49.6</td><td class="num">~1,510 (23.4%)</td></tr>
-      <tr><td>McKean County</td><td class="num">~38 mi</td><td class="num">~39,500</td><td class="num">43.8</td><td class="num">~7,900 (~20%)</td></tr>
-      <tr><td>Venango County</td><td class="num">~38 mi</td><td class="num">~49,500</td><td class="num">47.0</td><td class="num">~11,980 (24.2%)</td></tr>
-      <tr style="font-weight:500"><td>Total addressable region</td><td class="num">≤45 mi</td><td class="num">~132,850</td><td class="num">~47 avg</td><td class="num pos">~30,250 (~23%)</td></tr>
-    </table>
-    <div style="font-size:12px;color:#888;margin:4px 0 12px">Note: Crawford and Chautauqua (NY) counties also within ~45 mi, adding further population. Figures are estimates from 2020–2023 Census data. 65+ share applied proportionally per county rates.</div>
+    <div class="table-scroll">
+      <table>
+        <tr><th>County</th><th class="num">Dist. from Warren</th><th class="num">Population</th><th class="num">Median Age</th><th class="num">65+ Est.</th></tr>
+        <tr><td><b>Warren County</b> (core)</td><td class="num">—</td><td class="num">~37,400</td><td class="num">47.4</td><td class="num">~8,860 (23.7%)</td></tr>
+        <tr><td>Forest County</td><td class="num">~23 mi</td><td class="num">~6,450</td><td class="num">49.6</td><td class="num">~1,510 (23.4%)</td></tr>
+        <tr><td>McKean County</td><td class="num">~38 mi</td><td class="num">~39,500</td><td class="num">43.8</td><td class="num">~7,900 (~20%)</td></tr>
+        <tr><td>Venango County</td><td class="num">~38 mi</td><td class="num">~49,500</td><td class="num">47.0</td><td class="num">~11,980 (24.2%)</td></tr>
+        <tr style="font-weight:500"><td>Total addressable region</td><td class="num">≤45 mi</td><td class="num">~132,850</td><td class="num">~47 avg</td><td class="num pos">~30,250 (~23%)</td></tr>
+      </table>
+    </div>
+    <div style="font-size:12px;color:#888;margin:4px 0 12px">Note: Crawford and Chautauqua (NY) counties also within ~45 mi. Figures are estimates from 2020–2023 Census data.</div>
 
     <div class="section-title">Age structure — Warren County vs. national benchmarks</div>
     <div class="chart-wrap">
@@ -358,16 +414,16 @@
       <div style="position:relative;height:200px"><canvas id="ageChart"></canvas></div>
     </div>
 
-    <div class="section-title">Why this matters for home care</div>
+    <div class="section-title">Market dynamics</div>
     <ul class="flag-list">
-      <li class="green"><span class="flag-icon">✓</span><b>Highly aged market.</b> Warren County's 23.7% age 65+ is nearly 50% above the national average of ~16%. This is one of the most senior-heavy counties in Pennsylvania, creating durable, structural demand for home care services.</li>
-      <li class="green"><span class="flag-icon">✓</span><b>~30,000 seniors within 45 miles.</b> The multi-county region provides a meaningful addressable pool well beyond the city of Warren alone, and rural PA Medicaid waiver coverage extends across county lines.</li>
-      <li class="green"><span class="flag-icon">✓</span><b>Tailwinds are structural, not cyclical.</b> Rural PA added ~23% more seniors from 2010–2020. From 2021–2028, ~44,000 rural Pennsylvanians will turn 65 every year. Demand will grow regardless of economic conditions.</li>
-      <li class="green"><span class="flag-icon">✓</span><b>PA Medicaid support is robust.</b> Pennsylvania's Community HealthChoices and LIFE waiver programs fund in-home care for eligible seniors statewide. Avg. home care cost in PA is ~$4,957/month — a well-funded market.</li>
-      <li class="amber"><span class="flag-icon">!</span><b>Population is declining overall.</b> Warren County has lost ~14% of its total population since 2000. While the senior cohort is growing in absolute terms, the total pool shrinks — limiting long-run growth in the working-age caregiver supply.</li>
-      <li class="amber"><span class="flag-icon">!</span><b>Low income / fixed-income households.</b> Median household income in Warren is ~$50,900 — about 67% of the PA statewide median. Private-pay revenue growth may be limited; Medicaid dependence is likely high.</li>
-      <li class="amber"><span class="flag-icon">!</span><b>Thin competition — but verify.</b> Caring.com lists only ~6 home care agencies in Warren and ~3 in Warren County. Interim HealthCare and Senior Helpers appear present. Thin competition is favorable but should be confirmed via PA DOH licensee search.</li>
-      <li class="red"><span class="flag-icon">✕</span><b>Caregiver supply risk.</b> Rural, aging, shrinking-population counties have a structural caregiver workforce shortage. This is the most significant operational risk for any home care business in this geography — turnover and recruitment costs must be stress-tested.</li>
+      <li class="green"><span class="flag-icon">✓</span><b>Highly aged market.</b> Warren County's 23.7% age 65+ is nearly 50% above the national average of ~16% — structural, durable demand.</li>
+      <li class="green"><span class="flag-icon">✓</span><b>~30,000 seniors within 45 miles.</b> Multi-county region provides meaningful addressable scale beyond Warren City alone.</li>
+      <li class="green"><span class="flag-icon">✓</span><b>Structural tailwinds.</b> Rural PA added ~23% more seniors from 2010–2020; ~44,000 rural Pennsylvanians turn 65 annually through 2028.</li>
+      <li class="green"><span class="flag-icon">✓</span><b>PA Medicaid support is robust.</b> Community HealthChoices and LIFE waiver programs fund in-home care statewide. Avg. cost ~$4,957/month.</li>
+      <li class="amber"><span class="flag-icon">!</span><b>Overall population declining.</b> Warren County has lost ~14% of total population since 2000 — limits long-run growth in the working-age caregiver pool.</li>
+      <li class="amber"><span class="flag-icon">!</span><b>Low-income market.</b> Median HHI ~$50,900 — ~67% of PA statewide median. Private-pay upside is limited; Medicaid dependence is likely high.</li>
+      <li class="amber"><span class="flag-icon">!</span><b>Thin competition — verify.</b> ~6 home care agencies listed in Warren. Favorable but confirm via PA DOH licensee search.</li>
+      <li class="red"><span class="flag-icon">✕</span><b>Caregiver supply risk.</b> Rural, shrinking-population counties have a structural direct care workforce shortage. Most significant operational risk for this geography.</li>
     </ul>
 
     <div class="section-title">Market sizing (rough estimate)</div>
@@ -376,13 +432,58 @@
       <div class="card featured"><div class="label">Est. needing home care (~10–15%)</div><div class="val">3,000–4,500</div><div class="sub">Nationally accepted penetration</div></div>
       <div class="card"><div class="label">Implied rev. at $1,500/mo avg</div><div class="val">$54M–$81M</div><div class="sub">Total regional market TAM</div></div>
     </div>
-    <div style="font-size:12px;color:#888;margin-top:4px">At ~$1.82M revenue, Darling's captures an estimated 2–3% of the regional market — significant runway if caregiver supply constraints can be managed.</div>
+    <div style="font-size:12px;color:#888;margin-top:4px">At ~$1.82M revenue, Darling's captures an estimated 2–3% of the regional market.</div>
+  </div>
 
+  <!-- DOCUMENTS -->
+  <div id="tab-documents" class="panel">
+    <div style="font-size:14px;color:#1a1a18;margin-bottom:4px;font-weight:500">Upload diligence documents</div>
+    <div style="font-size:13px;color:#73726c;margin-bottom:14px">Upload financials, contracts, or any supporting documents. Claude will analyze them against the current report and suggest specific updates.</div>
+
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('file-input').click()" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+      <div class="dropzone-label">Drop files here or click to upload</div>
+      <div class="dropzone-sub">PDF, images, CSV, or TXT · Max 10MB per file</div>
+    </div>
+    <input type="file" id="file-input" multiple accept=".pdf,.png,.jpg,.jpeg,.csv,.txt" onchange="handleFileSelect(event)">
+
+    <ul class="file-list" id="file-list"></ul>
+
+    <button class="analyze-btn" id="analyze-btn" onclick="analyzeDocuments()" disabled>Analyze Documents</button>
+    <div class="doc-status" id="doc-status"></div>
+
+    <div id="doc-results" style="display:none;margin-top:20px">
+      <div class="section-title">Analysis</div>
+      <div class="analysis-commentary" id="doc-commentary"></div>
+
+      <div id="suggestions-section" style="display:none">
+        <div class="section-title" style="margin-top:1rem">Suggested report updates</div>
+        <div style="font-size:13px;color:#73726c;margin-bottom:10px">Select changes to apply to the report. Applied changes are saved in your browser.</div>
+        <div id="suggestions-list"></div>
+        <button class="apply-btn" id="apply-btn" onclick="applyChanges()">Apply Selected Changes</button>
+      </div>
+    </div>
   </div>
 
 </div>
 
+<!-- Floating chat -->
+<button id="chat-fab" onclick="toggleChat()" title="Ask the deal assistant">💬</button>
+<div id="chat-panel">
+  <div id="chat-header">
+    <span>Deal Assistant</span>
+    <button id="chat-close" onclick="toggleChat()">✕</button>
+  </div>
+  <div id="chat-messages">
+    <div class="chat-msg assistant">Ask me anything about this deal — financials, flags, valuation, or market context.</div>
+  </div>
+  <div id="chat-input-row">
+    <input id="chat-input" placeholder="Ask about the deal..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat();}">
+    <button id="chat-send" onclick="sendChat()">Send</button>
+  </div>
+</div>
+
 <script>
+// ─── Tab navigation ────────────────────────────────────────────────
 function showTab(name, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -393,37 +494,27 @@ function showTab(name, el) {
   if (name === 'market' && !window.marketBuilt) buildMarket();
 }
 
+// ─── Charts ────────────────────────────────────────────────────────
 function buildMarket() {
   window.marketBuilt = true;
-  const textColor = '#73726c';
-  const gridColor = 'rgba(0,0,0,0.06)';
+  const textColor = '#73726c', gridColor = 'rgba(0,0,0,0.06)';
   new Chart(document.getElementById('ageChart'), {
     type: 'bar',
     data: {
       labels: ['Venango County', 'Warren County', 'Forest County', 'McKean County', 'Pennsylvania', 'U.S. National'],
-      datasets: [{
-        label: '% Age 65+',
-        data: [24.2, 23.7, 23.4, 20.0, 19.0, 16.0],
-        backgroundColor: ['#185FA5','#185FA5','#185FA5','#3B8BD4','#73726c','#B4B2A9'],
-        borderRadius: 4
-      }]
+      datasets: [{ label: '% Age 65+', data: [24.2, 23.7, 23.4, 20.0, 19.0, 16.0], backgroundColor: ['#185FA5','#185FA5','#185FA5','#3B8BD4','#73726c','#B4B2A9'], borderRadius: 4 }]
     },
     options: {
-      indexAxis: 'y',
-      responsive: true, maintainAspectRatio: false,
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: {
-        x: { ticks: { color: textColor, callback: v => v + '%' }, grid: { color: gridColor }, max: 30 },
-        y: { ticks: { color: textColor }, grid: { color: gridColor } }
-      }
+      scales: { x: { ticks: { color: textColor, callback: v => v + '%' }, grid: { color: gridColor }, max: 30 }, y: { ticks: { color: textColor }, grid: { color: gridColor } } }
     }
   });
 }
 
 function buildCharts() {
   window.chartsBuilt = true;
-  const textColor = '#73726c';
-  const gridColor = 'rgba(0,0,0,0.06)';
+  const textColor = '#73726c', gridColor = 'rgba(0,0,0,0.06)';
   new Chart(document.getElementById('revChart'), {
     type: 'bar',
     data: {
@@ -446,13 +537,7 @@ function buildCharts() {
     type: 'line',
     data: {
       labels: ['2024', '2025', '2026 YTD'],
-      datasets: [{
-        label: 'Op. Margin %',
-        data: [-1.5, 11.9, 17.9],
-        borderColor: '#1D9E75', backgroundColor: 'rgba(29,158,117,0.1)',
-        pointBackgroundColor: ['#E24B4A','#1D9E75','#1D9E75'],
-        pointRadius: 5, fill: true, tension: 0.3
-      }]
+      datasets: [{ label: 'Op. Margin %', data: [-1.5, 11.9, 17.9], borderColor: '#1D9E75', backgroundColor: 'rgba(29,158,117,0.1)', pointBackgroundColor: ['#E24B4A','#1D9E75','#1D9E75'], pointRadius: 5, fill: true, tension: 0.3 }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
@@ -471,11 +556,7 @@ function buildCost() {
     type: 'doughnut',
     data: {
       labels: ['Wages & Salaries', 'Payroll Taxes', 'Software/IT', 'Car Expenses', 'Medical Supplies', 'Pension', 'Insurance', 'Other'],
-      datasets: [{
-        data: [1236817, 100099, 118024, 45496, 15881, 16804, 14487, 59732],
-        backgroundColor: ['#185FA5','#533AB7','#3B6D11','#854F0B','#A32D2D','#0F6E56','#63380e','#73726c'],
-        borderWidth: 0
-      }]
+      datasets: [{ data: [1236817, 100099, 118024, 45496, 15881, 16804, 14487, 59732], backgroundColor: ['#185FA5','#533AB7','#3B6D11','#854F0B','#A32D2D','#0F6E56','#63380e','#73726c'], borderWidth: 0 }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
@@ -484,6 +565,7 @@ function buildCost() {
   });
 }
 
+// ─── Valuation calculator ──────────────────────────────────────────
 function fmt(n) {
   if (isNaN(n) || n === null) return '—';
   return '$' + Math.round(n).toLocaleString();
@@ -498,17 +580,14 @@ function calcVal() {
   const replace = parseFloat(document.getElementById('v_replace').value) || 0;
   const rent = parseFloat(document.getElementById('v_rent').value) || 0;
   const debt = parseFloat(document.getElementById('v_debt').value) || 0;
-
   const ebitda = ni + interest + ownerWages + car + other - replace - rent;
   const el = document.getElementById('v_ebitda');
   el.textContent = fmt(ebitda);
   el.style.color = ebitda >= 0 ? '#0F6E56' : '#A32D2D';
-
   const multiples = [3.0, 4.0, 4.5, 5.0, 6.0];
   const ids = ['30','40','45','50','60'];
   multiples.forEach((m, i) => {
-    const ev = ebitda * m;
-    const eq = ev - debt;
+    const ev = ebitda * m, eq = ev - debt;
     document.getElementById('ev' + ids[i]).textContent = fmt(ev);
     document.getElementById('debt' + ids[i]).textContent = debt > 0 ? '(' + fmt(debt) + ')' : '—';
     const eqEl = document.getElementById('eq' + ids[i]);
@@ -529,7 +608,218 @@ function resetVal() {
   calcVal();
 }
 
-window.addEventListener('DOMContentLoaded', calcVal);
+// ─── Document upload ───────────────────────────────────────────────
+let uploadedFiles = [];
+
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('dropzone').classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+  document.getElementById('dropzone').classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropzone').classList.remove('drag-over');
+  addFiles(Array.from(e.dataTransfer.files));
+}
+
+function handleFileSelect(e) {
+  addFiles(Array.from(e.target.files));
+  e.target.value = '';
+}
+
+function addFiles(newFiles) {
+  const allowed = ['application/pdf', 'image/png', 'image/jpeg', 'text/csv', 'text/plain'];
+  for (const f of newFiles) {
+    if (f.size > 10 * 1024 * 1024) { alert(f.name + ' exceeds 10MB limit.'); continue; }
+    if (!allowed.includes(f.type) && !f.name.match(/\.(pdf|png|jpg|jpeg|csv|txt)$/i)) { alert(f.name + ' is not a supported file type.'); continue; }
+    if (!uploadedFiles.find(u => u.name === f.name && u.size === f.size)) uploadedFiles.push(f);
+  }
+  renderFileList();
+}
+
+function removeFile(idx) {
+  uploadedFiles.splice(idx, 1);
+  renderFileList();
+}
+
+function renderFileList() {
+  const list = document.getElementById('file-list');
+  list.innerHTML = '';
+  uploadedFiles.forEach((f, i) => {
+    const li = document.createElement('li');
+    li.className = 'file-item';
+    li.innerHTML = `<span>${f.name} <span style="color:#73726c;font-size:12px">(${(f.size/1024).toFixed(0)}KB)</span></span><button class="file-remove" onclick="removeFile(${i})">✕</button>`;
+    list.appendChild(li);
+  });
+  document.getElementById('analyze-btn').disabled = uploadedFiles.length === 0;
+}
+
+async function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function analyzeDocuments() {
+  const btn = document.getElementById('analyze-btn');
+  const status = document.getElementById('doc-status');
+  btn.disabled = true;
+  status.textContent = 'Analyzing documents…';
+  document.getElementById('doc-results').style.display = 'none';
+
+  try {
+    const files = await Promise.all(uploadedFiles.map(async f => ({
+      name: f.name,
+      mediaType: f.type || 'application/octet-stream',
+      data: await fileToBase64(f)
+    })));
+
+    const res = await fetch('/api/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ files })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Analysis failed');
+    }
+
+    const { commentary, suggestions } = await res.json();
+    status.textContent = '';
+    document.getElementById('doc-commentary').textContent = commentary;
+    document.getElementById('doc-results').style.display = 'block';
+
+    const sugSection = document.getElementById('suggestions-section');
+    const sugList = document.getElementById('suggestions-list');
+    sugList.innerHTML = '';
+
+    if (suggestions && suggestions.length > 0) {
+      window._pendingSuggestions = suggestions;
+      suggestions.forEach((s, i) => {
+        const div = document.createElement('div');
+        div.className = 'suggestion-card';
+        div.innerHTML = `<label><input type="checkbox" id="sug-${i}" checked><div><div class="s-section">${s.section || s.targetId}</div><div class="s-desc">${s.description}</div></div></label>`;
+        sugList.appendChild(div);
+      });
+      sugSection.style.display = 'block';
+    } else {
+      window._pendingSuggestions = [];
+      sugSection.style.display = 'none';
+    }
+  } catch (e) {
+    status.textContent = 'Error: ' + e.message;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function applyChanges() {
+  const suggestions = window._pendingSuggestions || [];
+  const validTargets = ['narrative-brief', 'narrative-headline', 'narrative-forward'];
+  let applied = 0;
+  const saved = JSON.parse(localStorage.getItem('diligence-overrides') || '{}');
+
+  suggestions.forEach((s, i) => {
+    const cb = document.getElementById('sug-' + i);
+    if (!cb || !cb.checked) return;
+    if (!validTargets.includes(s.targetId)) return;
+    const el = document.getElementById(s.targetId);
+    if (!el) return;
+
+    // Preserve the block-label div, replace the rest
+    const label = el.querySelector('.block-label');
+    const labelHTML = label ? label.outerHTML : '';
+    el.innerHTML = labelHTML + s.newContent;
+    saved[s.targetId] = { labelHTML, content: s.newContent };
+    applied++;
+  });
+
+  if (applied > 0) {
+    localStorage.setItem('diligence-overrides', JSON.stringify(saved));
+    document.getElementById('apply-btn').textContent = `✓ Applied ${applied} change${applied > 1 ? 's' : ''}`;
+    setTimeout(() => { document.getElementById('apply-btn').textContent = 'Apply Selected Changes'; }, 3000);
+  }
+}
+
+function loadSavedOverrides() {
+  const saved = JSON.parse(localStorage.getItem('diligence-overrides') || '{}');
+  for (const [id, data] of Object.entries(saved)) {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = data.labelHTML + data.content;
+  }
+}
+
+// ─── Chat ──────────────────────────────────────────────────────────
+let chatHistory = [];
+let chatOpen = false;
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  document.getElementById('chat-panel').classList.toggle('open', chatOpen);
+  if (chatOpen) document.getElementById('chat-input').focus();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  document.getElementById('chat-send').disabled = true;
+
+  appendChatMsg('user', text);
+  chatHistory.push({ role: 'user', content: text });
+
+  const loadingEl = appendChatMsg('assistant', 'Thinking…', true);
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: chatHistory })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Request failed');
+    }
+
+    const { message } = await res.json();
+    loadingEl.remove();
+    appendChatMsg('assistant', message);
+    chatHistory.push({ role: 'assistant', content: message });
+  } catch (e) {
+    loadingEl.textContent = 'Error: ' + e.message;
+    loadingEl.classList.remove('loading');
+  } finally {
+    document.getElementById('chat-send').disabled = false;
+    document.getElementById('chat-input').focus();
+  }
+}
+
+function appendChatMsg(role, text, loading = false) {
+  const msgs = document.getElementById('chat-messages');
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + role + (loading ? ' loading' : '');
+  div.textContent = text;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+// ─── Init ──────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  calcVal();
+  loadSavedOverrides();
+});
 </script>
 </body>
 </html>
