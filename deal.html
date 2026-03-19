@@ -568,25 +568,32 @@
   .doc-review-file-name { font-size: 15px; font-weight: 600; color: #1a1a18; line-height: 1.3; }
   .doc-review-progress { font-size: 12px; color: #aaa; margin-top: 3px; }
   .doc-review-body { padding: 20px 24px; max-height: 60vh; overflow-y: auto; }
-  .doc-review-summary { font-size: 14px; color: #333; line-height: 1.6; margin-bottom: 16px; }
-  .doc-review-section-label {
-    font-size: 11px; font-weight: 700; text-transform: uppercase;
-    letter-spacing: 0.06em; color: #888; margin-bottom: 8px;
+  .doc-review-summary-box {
+    background: #f7f7f5; border-radius: 10px; padding: 14px 16px; margin-bottom: 20px;
   }
-  .doc-review-findings { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-  .doc-review-finding {
-    font-size: 13px; color: #1a1a18; line-height: 1.5;
-    padding-left: 16px; position: relative;
+  .doc-review-summary-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    color: #aaa; margin-bottom: 6px;
   }
-  .doc-review-finding::before { content: '·'; position: absolute; left: 4px; color: #888; }
-  .doc-review-flags { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-  .doc-review-flag {
-    font-size: 13px; padding: 7px 12px; border-radius: 6px; line-height: 1.4;
+  .doc-review-summary { font-size: 14px; color: #333; line-height: 1.65; }
+  .doc-review-flags-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .doc-review-flag-card {
+    border-radius: 10px; padding: 14px 16px; line-height: 1.5;
+    display: flex; align-items: flex-start; gap: 10px;
   }
-  .doc-review-flag.red    { background: #FDECEA; color: #B71C1C; }
-  .doc-review-flag.amber  { background: #FFF8E1; color: #8C6200; }
-  .doc-review-flag.green  { background: #E8F5E9; color: #1B5E20; }
-  .doc-review-items { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; }
+  .doc-review-flag-card.red    { background: #FDECEA; border-left: 3px solid #E53935; }
+  .doc-review-flag-card.amber  { background: #FFF8E1; border-left: 3px solid #F9A825; }
+  .doc-review-flag-card.green  { background: #E8F5E9; border-left: 3px solid #43A047; }
+  .doc-review-flag-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+  .doc-review-flag-text { font-size: 14px; flex: 1; }
+  .doc-review-flag-text.red   { color: #B71C1C; }
+  .doc-review-flag-text.amber { color: #7A5000; }
+  .doc-review-flag-text.green { color: #1B5E20; }
+  .doc-review-items { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 4px; margin-top: 16px; }
+  .doc-review-items-label {
+    font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em;
+    color: #aaa; margin-bottom: 6px; margin-top: 16px;
+  }
   .doc-review-item-tag {
     font-size: 12px; background: #deeaf7; color: #185FA5;
     border-radius: 5px; padding: 3px 8px;
@@ -3063,31 +3070,27 @@ function showDocReviewModal(results) {
     let html = '';
 
     if (result.summary) {
-      html += `<div class="doc-review-summary">${escHtml(result.summary)}</div>`;
-    }
-
-    if (result.findings && result.findings.length > 0) {
-      html += `<div class="doc-review-section-label">Key Findings</div>`;
-      html += `<div class="doc-review-findings">`;
-      result.findings.forEach(f => {
-        html += `<div class="doc-review-finding">${escHtml(f)}</div>`;
-      });
-      html += `</div>`;
+      html += `<div class="doc-review-summary-box">
+        <div class="doc-review-summary-label">Summary</div>
+        <div class="doc-review-summary">${escHtml(result.summary)}</div>
+      </div>`;
     }
 
     if (result.flags && result.flags.length > 0) {
-      html += `<div class="doc-review-section-label">Flags</div>`;
-      html += `<div class="doc-review-flags">`;
+      html += `<div class="doc-review-flags-list">`;
       result.flags.forEach(f => {
         const cls = f.type === 'red' ? 'red' : f.type === 'amber' ? 'amber' : 'green';
-        const prefix = f.type === 'red' ? '🔴 ' : f.type === 'amber' ? '🟡 ' : '🟢 ';
-        html += `<div class="doc-review-flag ${cls}">${prefix}${escHtml(f.text)}</div>`;
+        const icon = f.type === 'red' ? '🔴' : f.type === 'amber' ? '🟡' : '🟢';
+        html += `<div class="doc-review-flag-card ${cls}">
+          <div class="doc-review-flag-icon">${icon}</div>
+          <div class="doc-review-flag-text ${cls}">${escHtml(f.text)}</div>
+        </div>`;
       });
       html += `</div>`;
     }
 
     if (result.coveredItemIds && result.coveredItemIds.length > 0) {
-      html += `<div class="doc-review-section-label">Diligence Items Covered</div>`;
+      html += `<div class="doc-review-items-label">Diligence Items Covered</div>`;
       html += `<div class="doc-review-items">`;
       result.coveredItemIds.forEach(id => {
         html += `<span class="doc-review-item-tag">${escHtml(id)}</span>`;
