@@ -1251,7 +1251,7 @@
         <div class="doc-dropzone" id="doc-dropzone" tabindex="0" role="button">
           <div class="doc-dropzone-icon">📎</div>
           <div class="doc-dropzone-text">Drop files here or <strong>click to browse</strong></div>
-          <div class="doc-dropzone-hint">PDF, images, CSV, TXT — max 10MB per file</div>
+          <div class="doc-dropzone-hint">PDF, images, CSV, TXT — max 3MB per file</div>
         </div>
         <input type="file" id="doc-file-input" multiple accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.csv,.txt">
         <div class="doc-files-pending" id="doc-files-pending"></div>
@@ -2820,8 +2820,8 @@ function handleDocFiles(fileList) {
   const statusEl = document.getElementById('doc-status');
   statusEl.textContent = '';
   for (const f of Array.from(fileList)) {
-    if (f.size > 10 * 1024 * 1024) {
-      statusEl.textContent = `${f.name} exceeds 10MB.`;
+    if (f.size > 3 * 1024 * 1024) {
+      statusEl.textContent = `${f.name} exceeds 3MB — please compress or split the file before uploading.`;
       statusEl.className = 'status-bar error';
       continue;
     }
@@ -2872,6 +2872,14 @@ async function runAnalysis() {
   const btn = document.getElementById('analyze-btn');
   const statusEl = document.getElementById('doc-status');
   const outputEl = document.getElementById('analysis-output');
+
+  // Check total payload — Vercel limit is ~4.5MB; base64 adds ~33% overhead
+  const totalBytes = docPendingFiles.reduce((sum, f) => sum + f.size, 0);
+  if (totalBytes > 3 * 1024 * 1024) {
+    statusEl.textContent = `Total file size (${(totalBytes/1024/1024).toFixed(1)}MB) exceeds the 3MB limit. Please upload fewer or smaller files.`;
+    statusEl.className = 'status-bar error';
+    return;
+  }
 
   btn.disabled = true;
   btn.textContent = 'Analyzing…';

@@ -2,5 +2,10 @@
   "rewrites": [
     { "source": "/deal", "destination": "/deal.html" },
     { "source": "/((?!api/)(?!deal\\.html$)(?!index\\.html$).*)", "destination": "/index.html" }
-  ]
+  ],
+  "functions": {
+    "api/analyze.mjs": { "maxDuration": 60 },
+    "api/extract.mjs": { "maxDuration": 60 },
+    "api/chat.mjs":    { "maxDuration": 30 }
+  }
 }
