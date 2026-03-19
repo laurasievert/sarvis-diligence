@@ -1,18 +1,13 @@
 import Anthropic from '@anthropic-ai/sdk';
 
-export const config = { runtime: 'edge' };
+export default async function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).end();
 
-export default async function handler(req) {
-  if (req.method !== 'POST') return new Response('Method not allowed', { status: 405 });
-
-  let body;
-  try { body = await req.json(); } catch { return new Response('Bad request', { status: 400 }); }
-
-  const { files, dealContext } = body;
-  if (!files || !files.length) return new Response(JSON.stringify({ error: 'files required' }), { status: 400 });
+  const { files, dealContext } = req.body;
+  if (!files || !files.length) return res.status(400).json({ error: 'files required' });
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) return new Response(JSON.stringify({ error: 'ANTHROPIC_API_KEY not set' }), { status: 500 });
+  if (!apiKey) return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set' });
 
   const client = new Anthropic({ apiKey });
 
@@ -24,8 +19,7 @@ export default async function handler(req) {
     } else if (file.mediaType && file.mediaType.startsWith('image/')) {
       content.push({ type: 'image', source: { type: 'base64', media_type: file.mediaType, data: file.data } });
     } else {
-      const text = atob(file.data);
-      content.push({ type: 'text', text: `[File: ${file.name}]\n${text}` });
+      content.push({ type: 'text', text: `[File: ${file.name}]\n${Buffer.from(file.data, 'base64').toString('utf-8')}` });
     }
   }
 
@@ -41,8 +35,7 @@ export default async function handler(req) {
       if (summary.operatingMarginLatest != null) contextSummary += `- Operating margin: ${(summary.operatingMarginLatest * 100).toFixed(1)}%\n`;
     }
     if (financials && financials.periods) {
-      const periods = Object.keys(financials.periods).sort().slice(-3);
-      periods.forEach(period => {
+      Object.keys(financials.periods).sort().slice(-3).forEach(period => {
         const p = financials.periods[period];
         if (p) contextSummary += `${period}: Revenue $${(p.revenue || 0).toLocaleString()}\n`;
       });
@@ -81,45 +74,20 @@ coveredItemIds: list checklist item IDs this document provides evidence for.
 Only suggest changes with clear document evidence. Be concise and analytical.`
   });
 
-  // Use streaming so the edge function stays alive for the full response
-  const stream = await client.messages.stream({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 2048,
-    messages: [{ role: 'user', content }]
-  });
+  try {
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2048,
+      messages: [{ role: 'user', content }]
+    });
 
-  const { readable, writable } = new TransformStream();
-  const writer = writable.getWriter();
-  const encoder = new TextEncoder();
-
-  (async () => {
-    try {
-      let text = '';
-      for await (const chunk of stream) {
-        if (chunk.type === 'content_block_delta' && chunk.delta?.type === 'text_delta') {
-          text += chunk.delta.text;
-          // Send progress ping so client knows we're alive
-          writer.write(encoder.encode(': ping\n\n'));
-        }
-      }
-
-      let suggestions = [];
-      const match = text.match(/<suggestions>([\s\S]*?)<\/suggestions>/);
-      if (match) { try { suggestions = JSON.parse(match[1].trim()); } catch {} }
-      const commentary = text.replace(/<suggestions>[\s\S]*?<\/suggestions>/, '').trim();
-
-      writer.write(encoder.encode(`data: ${JSON.stringify({ commentary, suggestions })}\n\n`));
-    } catch (e) {
-      writer.write(encoder.encode(`data: ${JSON.stringify({ error: e.message })}\n\n`));
-    } finally {
-      writer.close();
-    }
-  })();
-
-  return new Response(readable, {
-    headers: {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-    }
-  });
+    const text = response.content[0].text;
+    let suggestions = [];
+    const match = text.match(/<suggestions>([\s\S]*?)<\/suggestions>/);
+    if (match) { try { suggestions = JSON.parse(match[1].trim()); } catch {} }
+    const commentary = text.replace(/<suggestions>[\s\S]*?<\/suggestions>/, '').trim();
+    res.json({ commentary, suggestions });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 }
