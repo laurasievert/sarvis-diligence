@@ -3,7 +3,7 @@ import Anthropic from '@anthropic-ai/sdk';
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).end();
 
-  const { files } = req.body;
+  const { files, dealContext } = req.body;
   if (!files || !files.length) return res.status(400).json({ error: 'files required' });
 
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -33,16 +33,42 @@ export default async function handler(req, res) {
     }
   }
 
+  let contextSummary = '';
+  if (dealContext) {
+    const { name, entity, location, summary, financials, flags } = dealContext;
+    contextSummary = `\nCurrent deal: ${name || 'this business'}`;
+    if (entity) contextSummary += ` (${entity})`;
+    if (location) contextSummary += `, ${location}`;
+    contextSummary += '\n';
+    if (summary) {
+      if (summary.revenueLatestYear) contextSummary += `- Latest annual revenue: $${summary.revenueLatestYear.toLocaleString()}\n`;
+      if (summary.operatingMarginLatest != null) contextSummary += `- Operating margin: ${(summary.operatingMarginLatest * 100).toFixed(1)}%\n`;
+      if (summary.ebitdaEstimate) contextSummary += `- EBITDA estimate: $${summary.ebitdaEstimate.toLocaleString()}\n`;
+    }
+    if (financials && financials.periods) {
+      const periods = Object.keys(financials.periods).sort();
+      if (periods.length > 0) {
+        const recentPeriods = periods.slice(-3);
+        recentPeriods.forEach(period => {
+          const p = financials.periods[period];
+          if (p) {
+            contextSummary += `${period}: Revenue $${(p.revenue || 0).toLocaleString()}`;
+            if (p.operatingIncome != null) contextSummary += `, Op. Income $${p.operatingIncome.toLocaleString()}`;
+            contextSummary += '\n';
+          }
+        });
+      }
+    }
+    if (flags) {
+      const redCount = (flags.red || []).length;
+      const amberCount = (flags.amber || []).length;
+      contextSummary += `Current flags: ${redCount} red, ${amberCount} amber\n`;
+    }
+  }
+
   content.push({
     type: 'text',
-    text: `You are reviewing documents uploaded during diligence for the acquisition of Darling's Home Care (Darling Apothecary, LLC), a home care business in Warren, PA.
-
-Current known financials:
-- 2024: Revenue $1.62M, Operating loss –$23.9K
-- 2025: Revenue $1.82M, Operating income $216.6K (11.9% margin)
-- 2026 YTD: $364K revenue, 17.9% op. margin (~$1.74M annualized)
-- Labor (wages + payroll taxes) ≈ 78–80% of revenue
-- Key unknowns: payer mix, owner compensation, debt schedule, caregiver turnover
+    text: `You are reviewing documents uploaded during diligence for an acquisition.${contextSummary}
 
 Analyze the uploaded document(s) and provide:
 1. A brief summary of the document
