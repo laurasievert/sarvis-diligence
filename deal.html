@@ -1193,14 +1193,16 @@ function renderCharts() {
     }
   };
 
-  // Estimated bars get a hatched/lighter style
-  const revBg   = revData.map((_, i) => i === revData.length - 1 && estLabel ? 'rgba(29,158,117,0.25)' : '#d4ede7');
-  const revBord = revData.map((_, i) => i === revData.length - 1 && estLabel ? '#1D9E75' : '#0F6E56');
-  const opBg    = opData.map((v, i) => {
+  // Estimated bars get a lighter style; Revenue uses solid blue so legend is readable
+  const revBg = revData.map((_, i) => i === revData.length - 1 && estLabel ? 'rgba(24,95,165,0.3)' : '#185FA5');
+  const opBg  = opData.map((v, i) => {
     const isEst = i === opData.length - 1 && estLabel;
     if (v >= 0) return isEst ? 'rgba(15,110,86,0.35)' : '#0F6E56';
     return isEst ? 'rgba(163,45,45,0.35)' : '#A32D2D';
   });
+
+  const hasLoss   = opData.some(v => v < 0);
+  const hasProfit = opData.some(v => v >= 0);
 
   if (chartRevenue) chartRevenue.destroy();
   chartRevenue = new Chart(document.getElementById('chart-revenue'), {
@@ -1208,7 +1210,7 @@ function renderCharts() {
     data: {
       labels: chartLabels,
       datasets: [
-        { label: 'Revenue', data: revData, backgroundColor: revBg, borderColor: revBord, borderWidth: 1.5, borderRadius: 4, borderDash: [] },
+        { label: 'Revenue', data: revData, backgroundColor: revBg, borderRadius: 4 },
         { label: 'Op. Income / (Loss)', data: opData, backgroundColor: opBg, borderRadius: 4 }
       ]
     },
@@ -1216,7 +1218,18 @@ function renderCharts() {
       ...chartDefaults,
       layout: { padding: { top: 24 } },
       plugins: {
-        legend: { display: true, labels: { font: { size: 11 }, color: '#555', boxWidth: 10, padding: 12 } },
+        legend: {
+          display: true,
+          labels: {
+            font: { size: 11 }, color: '#555', boxWidth: 10, padding: 12,
+            generateLabels: () => {
+              const items = [{ text: 'Revenue', fillStyle: '#185FA5', strokeStyle: '#185FA5', lineWidth: 0, hidden: false, datasetIndex: 0 }];
+              if (hasProfit) items.push({ text: 'Op. Income', fillStyle: '#0F6E56', strokeStyle: '#0F6E56', lineWidth: 0, hidden: false, datasetIndex: 1 });
+              if (hasLoss)   items.push({ text: 'Op. Loss',   fillStyle: '#A32D2D', strokeStyle: '#A32D2D', lineWidth: 0, hidden: false, datasetIndex: 1 });
+              return items;
+            }
+          }
+        },
         tooltip: { mode: 'index', callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.raw.toLocaleString()}` } },
         datalabels: dlBar
       },
@@ -1516,7 +1529,7 @@ function renderMarket() {
   // ── Market sizing ──
   const sizingEl = document.getElementById('market-sizing-metrics');
   if (sizingEl) {
-    const totalSeniors = counties.reduce((s, c) => s + (c.seniors65 || 0), 0);
+    const totalSeniors = counties.reduce((s, c) => s + (c.seniors65 || 0), 0) || m.seniorCount || 0;
     const low = Math.round(totalSeniors * 0.10), high = Math.round(totalSeniors * 0.15);
     sizingEl.innerHTML = [
       { label: 'Seniors 65+ in region', val: totalSeniors ? '~' + totalSeniors.toLocaleString() : (m.seniorCount ? '~' + m.seniorCount.toLocaleString() : '—'), sub: '≤45 mi radius' },

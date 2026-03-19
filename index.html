@@ -437,6 +437,7 @@
 // ─── Storage helpers ───────────────────────────────────────────────────────────
 const DEALS_KEY = 'sarvis_deals';
 const INIT_KEY = 'sarvis_initialized';
+const SEED_VERSION = 3; // bump to patch existing Darling's deal with new fields
 
 function getDeals() {
   try { return JSON.parse(localStorage.getItem(DEALS_KEY) || '[]'); } catch { return []; }
@@ -580,13 +581,31 @@ const DARLINGS_SEED = {
 
 // ─── Initialize ────────────────────────────────────────────────────────────────
 function init() {
-  if (!localStorage.getItem(INIT_KEY)) {
-    const existing = getDeals();
-    if (existing.length === 0) {
+  const storedVersion = parseInt(localStorage.getItem(INIT_KEY) || '0');
+
+  if (storedVersion < SEED_VERSION) {
+    const deals = getDeals();
+    if (deals.length === 0) {
       saveDeals([DARLINGS_SEED]);
+    } else {
+      // Patch the existing Darling's deal with any missing fields from the seed
+      const patched = deals.map(d => {
+        if (d.id !== DARLINGS_SEED.id) return d;
+        return {
+          ...DARLINGS_SEED,
+          // Preserve any user edits to these fields
+          status: d.status || DARLINGS_SEED.status,
+          narratives: d.narratives || DARLINGS_SEED.narratives,
+          valuation: d.valuation || DARLINGS_SEED.valuation,
+          chatHistory: d.chatHistory || [],
+          documents: d.documents || [],
+        };
+      });
+      saveDeals(patched);
     }
-    localStorage.setItem(INIT_KEY, '1');
+    localStorage.setItem(INIT_KEY, String(SEED_VERSION));
   }
+
   renderDeals();
 }
 
