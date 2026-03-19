@@ -56,8 +56,8 @@ Analyze the document and respond with ONLY a JSON object in this exact format (n
   ]
 }
 
-coveredItemIds: checklist item IDs this document provides evidence for.
-flags: only include if the document reveals genuine red/amber concerns or confirms something positive (green).
+coveredItemIds: ONLY include checklist item IDs where this specific document directly contains the data or evidence needed for that item. Do NOT include items that are merely related or could theoretically benefit from the document. If a P&L is uploaded, only include items specifically requesting P&L data — not general business items that happen to be in the same category.
+flags: only include if the document reveals genuine red/amber concerns or confirms something positive (green). Be specific and cite numbers.
 narrativeSuggestions: only if the document clearly warrants a change to the deal narrative.
 Be concise and analytical.`
   });
