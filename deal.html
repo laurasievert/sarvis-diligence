@@ -1064,13 +1064,33 @@ function renderCharts() {
   const years = getFullYears();
   const periods = deal.financials?.periods || {};
 
-  const revData = years.map(y => periods[y]?.revenue || 0);
-  const opData = years.map(y => periods[y]?.operatingIncome || 0);
+  // Find the most recent partial period and compute annualized estimates
+  const allKeys = Object.keys(periods).sort();
+  const partialKey = allKeys.filter(k => !(/^\d{4}$/.test(k))).pop();
+  let estLabel = null, estRev = null, estOp = null, estMargin = null, estLabor = null;
+  if (partialKey) {
+    const factor = getAnnFactor(partialKey);
+    if (factor) {
+      const pp = periods[partialKey];
+      const yearStr = partialKey.slice(0, 4);
+      estLabel = yearStr + 'e';
+      estRev  = pp.revenue        != null ? Math.round(pp.revenue        * factor) : null;
+      estOp   = pp.operatingIncome != null ? Math.round(pp.operatingIncome * factor) : null;
+      if (estRev && estOp != null) estMargin = parseFloat(((estOp / estRev) * 100).toFixed(1));
+      if (pp.wages != null && pp.ficaTaxes != null && estRev) {
+        estLabor = parseFloat((((pp.wages + pp.ficaTaxes) * factor / estRev) * 100).toFixed(1));
+      }
+    }
+  }
+
+  const chartLabels = estLabel ? [...years, estLabel] : years;
+  const revData  = years.map(y => periods[y]?.revenue || 0).concat(estRev != null ? [estRev] : []);
+  const opData   = years.map(y => periods[y]?.operatingIncome || 0).concat(estOp != null ? [estOp] : []);
   const marginData = years.map(y => {
     const p = periods[y];
     if (!p || !p.revenue) return null;
     return parseFloat(((p.operatingIncome / p.revenue) * 100).toFixed(1));
-  });
+  }).concat(estMargin != null ? [estMargin] : []);
 
   // Register datalabels plugin globally
   if (window.ChartDataLabels) Chart.register(window.ChartDataLabels);
@@ -1106,14 +1126,23 @@ function renderCharts() {
     }
   };
 
+  // Estimated bars get a hatched/lighter style
+  const revBg   = revData.map((_, i) => i === revData.length - 1 && estLabel ? 'rgba(29,158,117,0.25)' : '#d4ede7');
+  const revBord = revData.map((_, i) => i === revData.length - 1 && estLabel ? '#1D9E75' : '#0F6E56');
+  const opBg    = opData.map((v, i) => {
+    const isEst = i === opData.length - 1 && estLabel;
+    if (v >= 0) return isEst ? 'rgba(15,110,86,0.35)' : '#0F6E56';
+    return isEst ? 'rgba(163,45,45,0.35)' : '#A32D2D';
+  });
+
   if (chartRevenue) chartRevenue.destroy();
   chartRevenue = new Chart(document.getElementById('chart-revenue'), {
     type: 'bar',
     data: {
-      labels: years,
+      labels: chartLabels,
       datasets: [
-        { label: 'Revenue', data: revData, backgroundColor: '#d4ede7', borderColor: '#0F6E56', borderWidth: 1.5, borderRadius: 4 },
-        { label: 'Op. Income / (Loss)', data: opData, backgroundColor: opData.map(v => v >= 0 ? '#0F6E56' : '#A32D2D'), borderRadius: 4 }
+        { label: 'Revenue', data: revData, backgroundColor: revBg, borderColor: revBord, borderWidth: 1.5, borderRadius: 4, borderDash: [] },
+        { label: 'Op. Income / (Loss)', data: opData, backgroundColor: opBg, borderRadius: 4 }
       ]
     },
     options: {
@@ -1135,14 +1164,18 @@ function renderCharts() {
   chartMargin = new Chart(document.getElementById('chart-margin'), {
     type: 'line',
     data: {
-      labels: years,
+      labels: chartLabels,
       datasets: [{
         label: 'Op. Margin %',
         data: marginData,
         borderColor: '#185FA5',
         backgroundColor: 'rgba(24,95,165,0.08)',
-        pointBackgroundColor: marginData.map(v => v == null ? 'transparent' : v >= 0 ? '#185FA5' : '#A32D2D'),
+        pointBackgroundColor: marginData.map((v, i) => v == null ? 'transparent' : i === marginData.length - 1 && estLabel ? 'rgba(24,95,165,0.45)' : v >= 0 ? '#185FA5' : '#A32D2D'),
+        pointStyle: marginData.map((_, i) => i === marginData.length - 1 && estLabel ? 'circle' : 'circle'),
+        pointBorderColor: marginData.map((_, i) => i === marginData.length - 1 && estLabel ? '#185FA5' : 'transparent'),
+        pointBorderWidth: marginData.map((_, i) => i === marginData.length - 1 && estLabel ? 2 : 0),
         pointRadius: 5,
+        segment: { borderDash: ctx => ctx.p1DataIndex === marginData.length - 1 && estLabel ? [4, 3] : [] },
         tension: 0.3,
         fill: true
       }]
@@ -1214,20 +1247,23 @@ function renderCharts() {
       if (!p2 || !p2.revenue) return null;
       const labor = (p2.wages || 0) + (p2.ficaTaxes || 0);
       return parseFloat(((labor / p2.revenue) * 100).toFixed(1));
-    });
+    }).concat(estLabor != null ? [estLabor] : []);
 
     if (chartLabor) chartLabor.destroy();
     chartLabor = new Chart(document.getElementById('chart-labor'), {
       type: 'line',
       data: {
-        labels: years,
+        labels: chartLabels,
         datasets: [{
           label: 'Labor %',
           data: laborData,
           borderColor: '#854F0B',
           backgroundColor: 'rgba(133,79,11,0.08)',
-          pointBackgroundColor: '#854F0B',
+          pointBackgroundColor: laborData.map((_, i) => i === laborData.length - 1 && estLabel ? 'rgba(133,79,11,0.4)' : '#854F0B'),
+          pointBorderColor: laborData.map((_, i) => i === laborData.length - 1 && estLabel ? '#854F0B' : 'transparent'),
+          pointBorderWidth: laborData.map((_, i) => i === laborData.length - 1 && estLabel ? 2 : 0),
           pointRadius: 5,
+          segment: { borderDash: ctx => ctx.p1DataIndex === laborData.length - 1 && estLabel ? [4, 3] : [] },
           tension: 0.3,
           fill: true
         }]
