@@ -248,6 +248,14 @@
   .pct-sub { font-size: 10px; color: #aaa; display: block; margin-top: 1px; }
   .partial-label { font-size: 10px; color: #aaa; display: block; font-weight: 400; margin-top: 1px; }
 
+  /* ─── Summary two-column ─── */
+  .summary-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .summary-col-left .metric-grid { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 720px) {
+    .summary-two-col { grid-template-columns: 1fr; }
+    .summary-col-left .metric-grid { grid-template-columns: 1fr 1fr; }
+  }
+
   /* ─── Flags ─── */
   .flags-section { margin-bottom: 20px; }
   .flag-header {
@@ -564,31 +572,34 @@
 
   <!-- ── Summary Tab ─────────────────────────────────────────────────────── -->
   <div class="tab-panel active" id="tab-summary">
-    <div class="section-title">Business Overview</div>
-    <div class="narrative-block blue">
-      <div class="narrative-header">
-        <span class="narrative-label" style="color:#185FA5;">Model &amp; Revenue</span>
-      </div>
-      <div id="narrative-brief"></div>
-    </div>
+    <div class="summary-two-col">
+      <div class="summary-col-left" id="summary-metrics-container"></div>
+      <div class="summary-col-right">
+        <div class="section-title">Business Overview</div>
+        <div class="narrative-block blue">
+          <div class="narrative-header">
+            <span class="narrative-label" style="color:#185FA5;">Model &amp; Revenue</span>
+          </div>
+          <div id="narrative-brief"></div>
+        </div>
 
-    <div class="section-title">Financial Highlights</div>
-    <div class="narrative-block green">
-      <div class="narrative-header">
-        <span class="narrative-label" style="color:#0F6E56;">Performance Trends</span>
-      </div>
-      <div id="narrative-headline"></div>
-    </div>
+        <div class="section-title">Financial Highlights</div>
+        <div class="narrative-block green">
+          <div class="narrative-header">
+            <span class="narrative-label" style="color:#0F6E56;">Performance Trends</span>
+          </div>
+          <div id="narrative-headline"></div>
+        </div>
 
-    <div class="section-title">Market &amp; Outlook</div>
-    <div class="narrative-block amber">
-      <div class="narrative-header">
-        <span class="narrative-label" style="color:#854F0B;">Forward View</span>
+        <div class="section-title">Market &amp; Outlook</div>
+        <div class="narrative-block amber">
+          <div class="narrative-header">
+            <span class="narrative-label" style="color:#854F0B;">Forward View</span>
+          </div>
+          <div id="narrative-forward"></div>
+        </div>
       </div>
-      <div id="narrative-forward"></div>
     </div>
-
-    <div id="summary-metrics-container"></div>
   </div>
 
   <!-- ── Financials Tab ──────────────────────────────────────────────────── -->
