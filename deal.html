@@ -2955,9 +2955,10 @@ async function runAnalysis() {
     industry: deal.industry, status: deal.status,
     summary: deal.summary,
     financials: deal.financials ? { periods: deal.financials.periods } : undefined,
+    valuation: deal.valuation,
     flags: deal.flags,
     market: deal.market ? { description: deal.market.description, tam: deal.market.tam } : undefined,
-    checklistItems: (deal.diligenceChecklist || []).map(i => ({ id: i.id, item: i.item, category: i.category })),
+    checklistItems: (deal.diligenceChecklist || []).map(i => ({ id: i.id, item: i.item, category: i.category, status: i.status })),
   };
 
   try {
@@ -3098,9 +3099,75 @@ function showDocReviewModal(results) {
       html += `</div>`;
     }
 
+    // Financial updates
+    if (result.financialUpdates && Object.keys(result.financialUpdates).length > 0) {
+      html += `<div class="doc-review-items-label" style="margin-top:16px;">📊 Financial Updates</div>`;
+      Object.entries(result.financialUpdates).forEach(([period, data]) => {
+        if (!data) return;
+        const lines = Object.entries(data).map(([k, v]) => `${k}: $${Number(v).toLocaleString()}`).join(' · ');
+        const key = `fin-${idx}-${period}`;
+        html += `<div class="suggestion-card" id="drm-${key}" style="margin-bottom:8px;">
+          <div class="suggestion-top"><span class="suggestion-section">Period: ${escHtml(period)}</span></div>
+          <div class="suggestion-desc" style="font-size:12px;color:#555;">${escHtml(lines)}</div>
+          <div class="suggestion-btns">
+            <button class="btn btn-blue" style="font-size:13px;padding:5px 10px;" data-drm-fin="${escHtml(period)}" data-drm-fin-data="${escHtml(JSON.stringify(data))}">Apply</button>
+            <button class="btn btn-outline" style="font-size:13px;padding:5px 10px;" onclick="document.getElementById('drm-${key}').remove()">Dismiss</button>
+          </div>
+        </div>`;
+      });
+    }
+
+    // Valuation updates
+    if (result.valuationUpdates && Object.keys(result.valuationUpdates).some(k => result.valuationUpdates[k] != null)) {
+      const vdata = result.valuationUpdates;
+      const vlines = Object.entries(vdata).filter(([,v]) => v != null).map(([k, v]) => `${k}: $${Number(v).toLocaleString()}`).join(' · ');
+      const vkey = `val-${idx}`;
+      html += `<div class="doc-review-items-label" style="margin-top:16px;">⚖️ Valuation Updates</div>`;
+      html += `<div class="suggestion-card" id="drm-${vkey}" style="margin-bottom:8px;">
+        <div class="suggestion-desc" style="font-size:12px;color:#555;">${escHtml(vlines)}</div>
+        <div class="suggestion-btns">
+          <button class="btn btn-blue" style="font-size:13px;padding:5px 10px;" data-drm-val="${escHtml(JSON.stringify(vdata))}">Apply</button>
+          <button class="btn btn-outline" style="font-size:13px;padding:5px 10px;" onclick="document.getElementById('drm-${vkey}').remove()">Dismiss</button>
+        </div>
+      </div>`;
+    }
+
+    // Summary updates
+    if (result.summaryUpdates && Object.keys(result.summaryUpdates).some(k => result.summaryUpdates[k] != null)) {
+      const sdata = result.summaryUpdates;
+      const slines = Object.entries(sdata).filter(([,v]) => v != null).map(([k, v]) => `${k}: ${typeof v === 'number' && v < 1 ? (v*100).toFixed(1)+'%' : '$'+Number(v).toLocaleString()}`).join(' · ');
+      const skey = `sum-${idx}`;
+      html += `<div class="doc-review-items-label" style="margin-top:16px;">📈 Summary Updates</div>`;
+      html += `<div class="suggestion-card" id="drm-${skey}" style="margin-bottom:8px;">
+        <div class="suggestion-desc" style="font-size:12px;color:#555;">${escHtml(slines)}</div>
+        <div class="suggestion-btns">
+          <button class="btn btn-blue" style="font-size:13px;padding:5px 10px;" data-drm-sum="${escHtml(JSON.stringify(sdata))}">Apply</button>
+          <button class="btn btn-outline" style="font-size:13px;padding:5px 10px;" onclick="document.getElementById('drm-${skey}').remove()">Dismiss</button>
+        </div>
+      </div>`;
+    }
+
+    // Diligence updates
+    if (result.diligenceUpdates && result.diligenceUpdates.length > 0) {
+      html += `<div class="doc-review-items-label" style="margin-top:16px;">✅ Diligence Updates</div>`;
+      result.diligenceUpdates.forEach((upd, di) => {
+        const dkey = `dil-${idx}-${di}`;
+        const item = (deal.diligenceChecklist || []).find(i => i.id === upd.id);
+        const label = item ? `${upd.id} — ${item.item}` : upd.id;
+        html += `<div class="suggestion-card" id="drm-${dkey}" style="margin-bottom:8px;">
+          <div class="suggestion-top"><span class="suggestion-section">${escHtml(label)}</span></div>
+          <div class="suggestion-desc">${escHtml(`Mark as ${upd.status}${upd.notes ? ': ' + upd.notes : ''}`)}</div>
+          <div class="suggestion-btns">
+            <button class="btn btn-blue" style="font-size:13px;padding:5px 10px;" data-drm-dil="${escHtml(JSON.stringify(upd))}">Apply</button>
+            <button class="btn btn-outline" style="font-size:13px;padding:5px 10px;" onclick="document.getElementById('drm-${dkey}').remove()">Dismiss</button>
+          </div>
+        </div>`;
+      });
+    }
+
     // Narrative suggestions
     if (result.narrativeSuggestions && result.narrativeSuggestions.length > 0) {
-      html += `<div class="doc-review-section-label" style="margin-top:12px;">Narrative Suggestions</div>`;
+      html += `<div class="doc-review-items-label" style="margin-top:16px;">✏️ Narrative Updates</div>`;
       result.narrativeSuggestions.forEach((sug, si) => {
         const sugKey = `${idx}-${si}`;
         html += `<div class="suggestion-card" id="drm-sug-${sugKey}" style="margin-bottom:8px;">
@@ -3116,12 +3183,59 @@ function showDocReviewModal(results) {
 
     bodyEl.innerHTML = html;
 
-    // Wire narrative apply buttons
+    // Wire apply buttons
+    bodyEl.querySelectorAll('[data-drm-fin]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const period = btn.dataset.drmFin;
+        const data = JSON.parse(btn.dataset.drmFinData);
+        if (!deal.financials) deal.financials = { periods: {}, lineItems: [] };
+        if (!deal.financials.periods) deal.financials.periods = {};
+        deal.financials.periods[period] = Object.assign(deal.financials.periods[period] || {}, data);
+        saveDeal(deal);
+        renderFinancials();
+        btn.closest('.suggestion-card').remove();
+      });
+    });
+
+    bodyEl.querySelectorAll('[data-drm-val]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const data = JSON.parse(btn.dataset.drmVal);
+        if (!deal.valuation) deal.valuation = {};
+        Object.entries(data).forEach(([k, v]) => { if (v != null) deal.valuation[k] = v; });
+        saveDeal(deal);
+        renderValuation();
+        btn.closest('.suggestion-card').remove();
+      });
+    });
+
+    bodyEl.querySelectorAll('[data-drm-sum]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const data = JSON.parse(btn.dataset.drmSum);
+        if (!deal.summary) deal.summary = {};
+        Object.entries(data).forEach(([k, v]) => { if (v != null) deal.summary[k] = v; });
+        saveDeal(deal);
+        btn.closest('.suggestion-card').remove();
+      });
+    });
+
+    bodyEl.querySelectorAll('[data-drm-dil]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const upd = JSON.parse(btn.dataset.drmDil);
+        const item = (deal.diligenceChecklist || []).find(i => i.id === upd.id);
+        if (item) {
+          item.status = upd.status;
+          if (upd.notes) item.notes = upd.notes;
+          saveDeal(deal);
+          renderDiligence();
+        }
+        btn.closest('.suggestion-card').remove();
+      });
+    });
+
     bodyEl.querySelectorAll('[data-drm-sug]').forEach(applyBtn => {
       applyBtn.addEventListener('click', () => {
         const targetId = applyBtn.dataset.target;
         const newContent = applyBtn.dataset.content;
-        const sugKey = applyBtn.dataset.drmSug;
         if (targetId && newContent) {
           const field = targetId.replace('narrative-', '');
           if (deal.narratives) {
@@ -3130,7 +3244,7 @@ function showDocReviewModal(results) {
             const liveEl = document.getElementById(targetId);
             if (liveEl) liveEl.innerHTML = newContent;
           }
-          document.getElementById(`drm-sug-${sugKey}`)?.remove();
+          applyBtn.closest('.suggestion-card').remove();
         }
       });
     });

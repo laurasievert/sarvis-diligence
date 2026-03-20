@@ -21,31 +21,62 @@ export default async function handler(req, res) {
     content.push({ type: 'text', text: `[File: ${file.name}]\n${Buffer.from(file.data, 'base64').toString('utf-8')}` });
   }
 
-  let contextSummary = '';
+  let ctx = '';
   if (dealContext) {
-    const { name, entity, location, summary, financials, flags, checklistItems } = dealContext;
-    contextSummary = `\nDeal: ${name || 'this business'}`;
-    if (entity) contextSummary += ` (${entity})`;
-    if (location) contextSummary += `, ${location}`;
-    contextSummary += '\n';
-    if (summary?.revenueLatestYear) contextSummary += `- Revenue: $${summary.revenueLatestYear.toLocaleString()}\n`;
-    if (flags) contextSummary += `- Flags: ${(flags.red||[]).length} red, ${(flags.amber||[]).length} amber\n`;
+    const { name, entity, location, summary, financials, valuation, flags, checklistItems } = dealContext;
+    ctx = `\nDeal: ${name || 'this business'}`;
+    if (entity) ctx += ` (${entity})`;
+    if (location) ctx += `, ${location}`;
+    ctx += '\n';
+    if (summary?.revenueLatestYear) ctx += `- Current revenue (latest year): $${summary.revenueLatestYear.toLocaleString()}\n`;
+    if (summary?.ebitdaEstimate) ctx += `- Current EBITDA estimate: $${summary.ebitdaEstimate.toLocaleString()}\n`;
+    if (flags) ctx += `- Flags: ${(flags.red||[]).length} red, ${(flags.amber||[]).length} amber\n`;
+
+    if (financials?.periods) {
+      ctx += `\nExisting financial periods (period: revenue | operatingIncome | netIncome):\n`;
+      Object.entries(financials.periods).forEach(([period, p]) => {
+        ctx += `${period}: $${(p.revenue||0).toLocaleString()} | $${(p.operatingIncome||0).toLocaleString()} | $${(p.netIncome||0).toLocaleString()}\n`;
+      });
+    }
+
+    if (valuation) {
+      ctx += `\nExisting valuation inputs: baseNetIncome=$${(valuation.baseNetIncome||0).toLocaleString()}, interestAddback=$${(valuation.interestAddback||0).toLocaleString()}, ownerWagesAddback=$${(valuation.ownerWagesAddback||0).toLocaleString()}, carAddback=$${(valuation.carAddback||0).toLocaleString()}, replacementSalary=$${(valuation.replacementSalary||0).toLocaleString()}, normalizedRent=$${(valuation.normalizedRent||0).toLocaleString()}\n`;
+    }
+
     if (checklistItems?.length) {
-      contextSummary += `\nDiligence checklist (id | item | category):\n`;
-      checklistItems.forEach(i => { contextSummary += `${i.id} | ${i.item} | ${i.category}\n`; });
+      ctx += `\nDiligence checklist (id | item | category | status):\n`;
+      checklistItems.forEach(i => { ctx += `${i.id} | ${i.item} | ${i.category} | ${i.status}\n`; });
     }
   }
 
   content.push({
     type: 'text',
-    text: `You are reviewing a document uploaded during diligence for an acquisition.${contextSummary}
+    text: `You are reviewing a document uploaded during diligence for an acquisition.${ctx}
 
 Analyze the document and respond with ONLY a JSON object in this exact format (no other text):
 {
   "summary": "2-3 sentence summary of what this document is and what it shows",
-  "findings": ["key finding 1", "key finding 2", "key finding 3"],
-  "flags": [{"type": "red|amber|green", "text": "flag description"}],
+  "flags": [{"type": "red|amber|green", "text": "flag description — cite specific numbers"}],
   "coveredItemIds": ["3.01", "3.02"],
+  "financialUpdates": {
+    "2024": {"revenue": 1615574, "wages": 1193572, "ficaTaxes": 89451, "operatingIncome": -23925, "netIncome": 6500}
+  },
+  "summaryUpdates": {
+    "revenueLatestYear": 1823928,
+    "operatingMarginLatest": 0.119,
+    "ebitdaEstimate": 237000,
+    "laborPct": 0.68
+  },
+  "valuationUpdates": {
+    "baseNetIncome": 195421,
+    "interestAddback": 21167,
+    "ownerWagesAddback": 0,
+    "carAddback": 0,
+    "normalizedRent": 20000
+  },
+  "diligenceUpdates": [
+    {"id": "3.01", "status": "received", "notes": "2024 and 2025 P&L statements uploaded (cash basis)."}
+  ],
   "narrativeSuggestions": [
     {
       "targetId": "narrative-brief|narrative-headline|narrative-forward",
@@ -56,9 +87,14 @@ Analyze the document and respond with ONLY a JSON object in this exact format (n
   ]
 }
 
-coveredItemIds: ONLY include checklist item IDs where this specific document directly contains the data or evidence needed for that item. Do NOT include items that are merely related or could theoretically benefit from the document. If a P&L is uploaded, only include items specifically requesting P&L data — not general business items that happen to be in the same category.
-flags: only include if the document reveals genuine red/amber concerns or confirms something positive (green). Be specific and cite numbers.
-narrativeSuggestions: only if the document clearly warrants a change to the deal narrative.
+Rules:
+- flags: only genuine concerns or confirmed positives. Cite numbers. Omit if none.
+- coveredItemIds: ONLY checklist items this document directly provides evidence for. Be conservative.
+- financialUpdates: ONLY if this document IS a financial statement. Key by period string (e.g. "2024", "2025", "2026-Q1"). Only include fields you can actually read. Valid fields: revenue, cogs, grossProfit, wages, ficaTaxes, software, car, insurance, pension, rent, medicalSupplies, employeeBenefits, interestExpense, otherExpenses, totalExpenses, operatingIncome, otherIncome, netIncome. Set to null if no financials.
+- summaryUpdates: only if document provides better data for top-level KPIs. Set to null if not applicable.
+- valuationUpdates: only if document reveals owner compensation, add-backs, or normalized costs that differ from existing values. Set to null if not applicable.
+- diligenceUpdates: only mark items as "received" if this document directly satisfies the specific request. "addressed" = fully resolved. Set to null if not applicable.
+- narrativeSuggestions: only if document clearly warrants a narrative change. Set to null if not applicable.
 Be concise and analytical.`
   });
 
@@ -72,11 +108,10 @@ Be concise and analytical.`
     const text = response.content[0].text.trim();
     let result;
     try {
-      // Strip markdown code fences if present
       const clean = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/, '').trim();
       result = JSON.parse(clean);
     } catch {
-      result = { summary: text, findings: [], flags: [], coveredItemIds: [], narrativeSuggestions: [] };
+      result = { summary: text, flags: [], coveredItemIds: [], financialUpdates: null, summaryUpdates: null, valuationUpdates: null, diligenceUpdates: null, narrativeSuggestions: null };
     }
     res.json(result);
   } catch (e) {
