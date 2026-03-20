@@ -643,9 +643,14 @@
   .call-notes-section { margin-top: 20px; padding-top: 16px; border-top: 0.5px solid #eee; }
   .call-notes-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .call-notes-list { display: flex; flex-direction: column; gap: 8px; }
-  .call-note-card { background: #fff; border: 0.5px solid #e0e0da; border-radius: 10px; padding: 12px 14px; }
-  .call-note-meta { font-size: 11px; color: #aaa; margin-bottom: 4px; }
-  .call-note-text { font-size: 13px; color: #333; line-height: 1.6; white-space: pre-wrap; }
+  .call-note-card { background: #fff; border: 0.5px solid #e0e0da; border-radius: 10px; padding: 12px 14px; cursor: pointer; transition: border-color 0.15s; }
+  .call-note-card:hover { border-color: #bbb; }
+  .call-note-meta { font-size: 11px; color: #aaa; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+  .call-note-preview { font-size: 13px; color: #555; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .call-note-text { font-size: 13px; color: #333; line-height: 1.6; white-space: pre-wrap; display: none; margin-top: 8px; padding-top: 8px; border-top: 0.5px solid #eee; }
+  .call-note-card.expanded .call-note-text { display: block; }
+  .call-note-card.expanded .call-note-preview { display: none; }
+  .call-note-expand-icon { font-size: 10px; color: #aaa; margin-left: auto; }
   .call-note-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
 
   /* ─── Chat ─── */
@@ -2029,18 +2034,34 @@ function renderCallNotes() {
     listEl.innerHTML = '<div style="font-size:13px;color:#bbb;padding:8px 0;">No call notes yet. Add notes from owner calls, site visits, or broker conversations.</div>';
     return;
   }
-  listEl.innerHTML = notes.map((n, i) => `
-    <div class="call-note-card">
+  listEl.innerHTML = notes.map((n, i) => {
+    const preview = n.body.replace(/\n+/g, ' ').slice(0, 120) + (n.body.length > 120 ? '…' : '');
+    return `
+    <div class="call-note-card" data-note-idx="${i}">
       <div class="call-note-meta">
-        <strong>${escHtml(n.title || 'Untitled')}</strong> · ${new Date(n.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'})}
-        <button class="btn btn-outline" style="font-size:11px;padding:2px 7px;margin-left:8px;color:#A32D2D;border-color:#ddd;" data-note-rm="${i}">Remove</button>
+        <strong>${escHtml(n.title || 'Untitled')}</strong>
+        <span>·</span>
+        <span>${new Date(n.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'})}</span>
+        ${n.coveredItemIds?.length ? `<span style="color:#185FA5;font-weight:600;">${n.coveredItemIds.length} item${n.coveredItemIds.length>1?'s':''} linked</span>` : ''}
+        <span class="call-note-expand-icon">▼</span>
+        <button class="btn btn-outline" style="font-size:11px;padding:2px 7px;color:#A32D2D;border-color:#ddd;margin-left:4px;" data-note-rm="${i}">Remove</button>
       </div>
+      <div class="call-note-preview">${escHtml(preview)}</div>
       <div class="call-note-text">${escHtml(n.body)}</div>
       ${n.coveredItemIds?.length ? `<div class="call-note-tags">${n.coveredItemIds.map(id => `<span class="doc-review-item-tag">${escHtml(id)}</span>`).join('')}</div>` : ''}
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+
+  listEl.querySelectorAll('.call-note-card').forEach(card => {
+    card.addEventListener('click', e => {
+      if (e.target.dataset.noteRm) return;
+      card.classList.toggle('expanded');
+      card.querySelector('.call-note-expand-icon').textContent = card.classList.contains('expanded') ? '▲' : '▼';
+    });
+  });
   listEl.querySelectorAll('[data-note-rm]').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
       deal.callNotes.splice(parseInt(btn.dataset.noteRm), 1);
       saveDeal(deal); renderCallNotes();
     });
