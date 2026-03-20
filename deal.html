@@ -609,6 +609,45 @@
   .doc-review-dot.active { background: #1a1a18; }
   .doc-review-nav { display: flex; gap: 8px; }
 
+  /* ─── Scenarios & Forecast ─── */
+  .scenario-section { margin-bottom: 4px; }
+  .scenario-toolbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 8px 0 6px; }
+  .scenario-chips { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex: 1; min-width: 0; }
+  .scenario-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px; border-radius: 20px; border: 1.5px solid #ddd;
+    background: #fff; font-size: 12px; cursor: pointer; user-select: none; transition: all 0.15s;
+  }
+  .forecast-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 11px; border-radius: 20px; border: 1.5px solid #ddd;
+    background: #fff; font-size: 12px; cursor: pointer; user-select: none; transition: all 0.15s; white-space: nowrap;
+  }
+  .forecast-chip.active { border-color: #854F0B; background: #FFF5E6; color: #854F0B; font-weight: 500; }
+  .sc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .sc-edit { font-size: 10px; opacity: 0.4; margin-left: 2px; padding: 0 2px; cursor: pointer; }
+  .sc-edit:hover { opacity: 1; }
+  .fc-inputs { display: flex; gap: 14px; flex-wrap: wrap; align-items: flex-end; padding: 6px 0 12px; }
+  .fc-input-group { display: flex; flex-direction: column; gap: 3px; }
+  .fc-input-group label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #888; }
+  .fc-input-group input { width: 80px; padding: 5px 8px; border: 1px solid #ddd; border-radius: 6px; font-size: 13px; background: #fff; }
+  .th-forecast { color: #854F0B !important; background: rgba(133,79,11,0.04) !important; }
+  .th-scenario-adj { color: #185FA5 !important; background: rgba(24,95,165,0.05) !important; }
+  .cell-forecast { color: #6B3F0A; font-style: italic; background: rgba(133,79,11,0.03); }
+  .cell-scenario { background: rgba(24,95,165,0.04); }
+  .scm-adj-row { display:flex; align-items:center; justify-content:space-between; padding:5px 8px; background:#f7f7f5; border-radius:6px; margin-bottom:5px; font-size:12px; color:#555; gap:8px; }
+  .scm-color-dot { width:22px; height:22px; border-radius:50%; cursor:pointer; border:2px solid transparent; transition:transform 0.1s, border-color 0.1s; flex-shrink:0; }
+  .scm-color-dot:hover { transform:scale(1.15); }
+  .scm-color-dot.selected { border-color:#1a1a18; transform:scale(1.15); }
+  /* ─── Call Notes ─── */
+  .call-notes-section { margin-top: 20px; padding-top: 16px; border-top: 0.5px solid #eee; }
+  .call-notes-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .call-notes-list { display: flex; flex-direction: column; gap: 8px; }
+  .call-note-card { background: #fff; border: 0.5px solid #e0e0da; border-radius: 10px; padding: 12px 14px; }
+  .call-note-meta { font-size: 11px; color: #aaa; margin-bottom: 4px; }
+  .call-note-text { font-size: 13px; color: #333; line-height: 1.6; white-space: pre-wrap; }
+  .call-note-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px; }
+
   /* ─── Chat ─── */
   .chat-container {
     display: flex;
@@ -1170,6 +1209,24 @@
       </div>
     </div>
 
+    <!-- Scenarios & Forecast -->
+    <div class="scenario-section">
+      <div class="section-title" style="margin-bottom:8px;">Scenarios &amp; Forecast</div>
+      <div class="scenario-toolbar">
+        <div class="scenario-chips" id="scenario-chips"></div>
+        <button class="btn btn-outline" id="add-scenario-btn" style="font-size:12px;padding:4px 10px;white-space:nowrap;">+ Add Scenario</button>
+        <div id="forecast-chip-wrap"></div>
+      </div>
+      <div id="fc-inputs-wrap" style="display:none;">
+        <div class="fc-inputs">
+          <div class="fc-input-group"><label>Revenue Growth / yr (%)</label><input type="number" id="fc-growth" value="10" min="-50" max="200"></div>
+          <div class="fc-input-group"><label>Op. Margin (%)</label><input type="number" id="fc-margin" value="12" min="-50" max="100"></div>
+          <div class="fc-input-group"><label>Years</label><input type="number" id="fc-years" value="5" min="1" max="10"></div>
+          <button class="btn btn-dark" id="fc-update-btn" style="font-size:12px;padding:5px 10px;margin-top:18px;">Update Forecast</button>
+        </div>
+      </div>
+    </div>
+
     <div class="section-title">P&amp;L Spreadsheet</div>
     <div class="period-toggle">
       <button class="period-btn active" data-view="yearly">Yearly</button>
@@ -1350,6 +1407,24 @@
       </div>
     </div>
     <div id="dr-body"></div>
+
+    <!-- Call Notes -->
+    <div class="call-notes-section">
+      <div class="call-notes-header">
+        <div class="dr-title">Call &amp; Diligence Notes</div>
+        <button class="btn btn-outline" id="add-call-note-btn" style="font-size:12px;padding:4px 10px;">+ Add Note</button>
+      </div>
+      <div id="call-note-form" style="display:none;background:#f7f7f5;border-radius:10px;padding:14px;margin-bottom:12px;">
+        <input type="text" id="call-note-title" placeholder="Note title (e.g. Owner call 3/19, Site visit notes)" style="width:100%;padding:7px 10px;border:1px solid #ddd;border-radius:7px;font-size:13px;margin-bottom:8px;">
+        <textarea id="call-note-body" placeholder="Paste or type your notes here. Claude will extract diligence answers and link them to checklist items." rows="6" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:7px;font-size:13px;resize:vertical;font-family:inherit;"></textarea>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+          <button class="btn btn-dark" id="call-note-save-btn" style="font-size:13px;">Save &amp; Analyze</button>
+          <button class="btn btn-outline" id="call-note-cancel-btn" style="font-size:13px;">Cancel</button>
+          <div class="status-bar" id="call-note-status" style="flex:1;"></div>
+        </div>
+      </div>
+      <div class="call-notes-list" id="call-notes-list"></div>
+    </div>
 
   </div>
 
@@ -1664,7 +1739,383 @@ function renderSummary() {
 // ─── Financials tab ────────────────────────────────────────────────────────────
 let chartRevenue, chartMargin, chartCosts, chartLabor;
 
+// ─── Scenario / Forecast engine ────────────────────────────────────────────────
+const SCENARIO_COLORS = [
+  { hex: '#E53935', bg: 'rgba(229,57,53,0.08)' },
+  { hex: '#F4511E', bg: 'rgba(244,81,30,0.08)' },
+  { hex: '#F9A825', bg: 'rgba(249,168,37,0.08)' },
+  { hex: '#43A047', bg: 'rgba(67,160,71,0.08)' },
+  { hex: '#185FA5', bg: 'rgba(24,95,165,0.08)' },
+  { hex: '#7B1FA2', bg: 'rgba(123,31,162,0.08)' },
+];
+
+const PL_ADJ_FIELDS = [
+  { key: 'revenue',          label: 'Revenue' },
+  { key: 'wages',            label: 'Wages & Salaries' },
+  { key: 'ficaTaxes',        label: 'FICA / Payroll Taxes' },
+  { key: 'software',         label: 'Software / IT' },
+  { key: 'car',              label: 'Car Expenses' },
+  { key: 'insurance',        label: 'Insurance' },
+  { key: 'pension',          label: 'Pension' },
+  { key: 'rent',             label: 'Rent & Occupancy' },
+  { key: 'medicalSupplies',  label: 'Medical Supplies' },
+  { key: 'employeeBenefits', label: 'Employee Benefits' },
+  { key: 'interestExpense',  label: 'Interest Expense' },
+  { key: 'otherExpenses',    label: 'Other Expenses' },
+  { key: 'otherIncome',      label: 'Other Income' },
+];
+
+const SC_PRESETS = [
+  { label: 'Revenue -5%',       adjs: [{ field: 'revenue',  period: '*', type: 'pct', value: -5  }] },
+  { label: 'Revenue -10%',      adjs: [{ field: 'revenue',  period: '*', type: 'pct', value: -10 }] },
+  { label: 'Revenue -20%',      adjs: [{ field: 'revenue',  period: '*', type: 'pct', value: -20 }] },
+  { label: 'Labor +5%',         adjs: [{ field: 'wages', period: '*', type: 'pct', value: 5 }, { field: 'ficaTaxes', period: '*', type: 'pct', value: 5 }] },
+  { label: 'Labor +10%',        adjs: [{ field: 'wages', period: '*', type: 'pct', value: 10 }, { field: 'ficaTaxes', period: '*', type: 'pct', value: 10 }] },
+  { label: 'Norm. Rent $20K',   adjs: [{ field: 'rent',    period: '*', type: 'set', value: 20000 }] },
+  { label: 'Owner Salary $80K', adjs: [{ field: 'wages',   period: '*', type: 'delta', value: 80000 }] },
+];
+
+const EXP_FIELDS = ['wages','ficaTaxes','software','car','insurance','pension','rent','medicalSupplies','employeeBenefits','interestExpense','otherExpenses'];
+
+function applyScenarios(basePeriods, scenarios) {
+  const result = {};
+  for (const [k, v] of Object.entries(basePeriods)) result[k] = { ...v };
+  for (const sc of scenarios) {
+    for (const adj of (sc.adjustments || [])) {
+      const targets = adj.period === '*' ? Object.keys(result) : [adj.period];
+      for (const period of targets) {
+        if (!result[period]) continue;
+        const cur = result[period][adj.field] ?? 0;
+        if      (adj.type === 'set')   result[period][adj.field] = adj.value;
+        else if (adj.type === 'delta') result[period][adj.field] = cur + adj.value;
+        else if (adj.type === 'pct')   result[period][adj.field] = Math.round(cur * (1 + adj.value / 100));
+      }
+    }
+  }
+  for (const p of Object.keys(result)) {
+    const d = result[p];
+    d.grossProfit    = (d.revenue || 0) - (d.cogs || 0);
+    d.totalExpenses  = EXP_FIELDS.reduce((s, k) => s + (d[k] || 0), 0);
+    d.operatingIncome = (d.grossProfit || 0) - d.totalExpenses;
+    d.netIncome      = d.operatingIncome + (d.otherIncome || 0);
+  }
+  return result;
+}
+
+function computeForecastPeriods() {
+  const fc = deal.forecast;
+  if (!fc?.active) return {};
+  const years = getFullYears();
+  const lastYear = years[years.length - 1];
+  if (!lastYear) return {};
+  const basePeriods = deal.financials?.periods || {};
+  const activeScenarios = (deal.scenarios || []).filter(s => s.active);
+  const src = activeScenarios.length ? applyScenarios(basePeriods, activeScenarios) : basePeriods;
+  const base = src[lastYear];
+  if (!base) return {};
+
+  const growthPct = ((fc.revenueGrowthPct ?? 10)) / 100;
+  const fcYears   = fc.years ?? 5;
+  const wRatio    = base.revenue ? (base.wages || 0) / base.revenue : 0.65;
+  const fRatio    = base.revenue ? (base.ficaTaxes || 0) / base.revenue : 0.07;
+
+  const result = {};
+  let prevRev = base.revenue || 0;
+  for (let i = 1; i <= fcYears; i++) {
+    const key = (parseInt(lastYear) + i) + 'F';
+    const revenue        = Math.round(prevRev * (1 + growthPct));
+    const wages          = Math.round(revenue * wRatio);
+    const ficaTaxes      = Math.round(revenue * fRatio);
+    const software       = base.software || 0;
+    const car            = Math.round((base.car || 0) * Math.pow(1 + growthPct * 0.5, i));
+    const insurance      = base.insurance || 0;
+    const pension        = base.pension || 0;
+    const rent           = base.rent || 0;
+    const medicalSupplies   = Math.round((base.medicalSupplies || 0) * (1 + growthPct * i));
+    const employeeBenefits  = Math.round((base.employeeBenefits || 0) * Math.pow(1 + growthPct * 0.5, i));
+    const interestExpense   = base.interestExpense || 0;
+    const otherExpenses     = Math.round((base.otherExpenses || 0) * Math.pow(1 + growthPct * 0.3, i));
+    const totalExpenses     = wages + ficaTaxes + software + car + insurance + pension + rent + medicalSupplies + employeeBenefits + interestExpense + otherExpenses;
+    const operatingIncome   = revenue - totalExpenses;
+    result[key] = { revenue, cogs: 0, grossProfit: revenue, wages, ficaTaxes, software, car, insurance, pension, rent, medicalSupplies, employeeBenefits, interestExpense, otherExpenses, totalExpenses, operatingIncome, otherIncome: 0, netIncome: operatingIncome };
+    prevRev = revenue;
+  }
+  return result;
+}
+
+function getCurrentView() {
+  return document.querySelector('.period-btn.active')?.dataset.view || 'yearly';
+}
+
+function renderScenarioPanel() {
+  const scenarios = deal.scenarios || [];
+  const fc = deal.forecast || {};
+  const chipsEl  = document.getElementById('scenario-chips');
+  const fcWrap   = document.getElementById('forecast-chip-wrap');
+  const fcInputs = document.getElementById('fc-inputs-wrap');
+  if (!chipsEl) return;
+
+  if (scenarios.length === 0) {
+    chipsEl.innerHTML = '<span style="font-size:12px;color:#bbb;">No scenarios yet</span>';
+  } else {
+    chipsEl.innerHTML = scenarios.map(sc => {
+      const col = SCENARIO_COLORS.find(c => c.hex === sc.color) || SCENARIO_COLORS[4];
+      const activeStyle = sc.active ? `border-color:${sc.color};background:${col.bg};color:${sc.color};font-weight:500;` : '';
+      return `<div class="scenario-chip" style="${activeStyle}" data-sc-id="${sc.id}">
+        <div class="sc-dot" style="background:${sc.color}"></div>
+        ${escHtml(sc.name)}
+        <span class="sc-edit" data-sc-edit="${sc.id}" title="Edit">✎</span>
+      </div>`;
+    }).join('');
+    chipsEl.querySelectorAll('.scenario-chip').forEach(chip => {
+      chip.addEventListener('click', e => {
+        if (e.target.dataset.scEdit) { showScenarioModal(e.target.dataset.scEdit); return; }
+        const sc = (deal.scenarios||[]).find(s => s.id === chip.dataset.scId);
+        if (sc) { sc.active = !sc.active; saveDeal(deal); renderScenarioPanel(); renderPLTable(getCurrentView()); renderCharts(); }
+      });
+    });
+  }
+
+  if (fcWrap) {
+    const active = !!fc.active;
+    fcWrap.innerHTML = `<div class="forecast-chip${active?' active':''}" id="fc-chip">📈 ${active?'Forecast On':'5-Year Forecast'}</div>`;
+    document.getElementById('fc-chip').addEventListener('click', () => {
+      if (!deal.forecast) deal.forecast = {};
+      deal.forecast.active = !deal.forecast.active;
+      saveDeal(deal); renderScenarioPanel(); renderPLTable(getCurrentView()); renderCharts();
+    });
+  }
+
+  if (fcInputs) {
+    fcInputs.style.display = fc.active ? '' : 'none';
+    if (fc.active) {
+      document.getElementById('fc-growth').value = fc.revenueGrowthPct ?? 10;
+      document.getElementById('fc-margin').value = fc.operatingMarginPct ?? 12;
+      document.getElementById('fc-years').value  = fc.years ?? 5;
+    }
+  }
+
+  const addBtn = document.getElementById('add-scenario-btn');
+  if (addBtn && !addBtn._wired) { addBtn._wired = true; addBtn.addEventListener('click', () => showScenarioModal(null)); }
+
+  const fcUpd = document.getElementById('fc-update-btn');
+  if (fcUpd && !fcUpd._wired) {
+    fcUpd._wired = true;
+    fcUpd.addEventListener('click', () => {
+      if (!deal.forecast) deal.forecast = {};
+      deal.forecast.revenueGrowthPct  = parseFloat(document.getElementById('fc-growth').value) || 10;
+      deal.forecast.operatingMarginPct = parseFloat(document.getElementById('fc-margin').value) || 12;
+      deal.forecast.years = parseInt(document.getElementById('fc-years').value) || 5;
+      saveDeal(deal); renderPLTable(getCurrentView()); renderCharts();
+    });
+  }
+}
+
+// ─── Scenario modal ────────────────────────────────────────────────────────────
+let _scAdj = [], _scColor = '#185FA5', _scEditId = null;
+
+function showScenarioModal(editId) {
+  const existing = editId ? (deal.scenarios||[]).find(s => s.id === editId) : null;
+  _scAdj    = existing ? JSON.parse(JSON.stringify(existing.adjustments || [])) : [];
+  _scColor  = existing?.color || SCENARIO_COLORS[0].hex;
+  _scEditId = editId || null;
+
+  document.getElementById('scm-title').textContent = existing ? 'Edit Scenario' : 'Add Scenario';
+  document.getElementById('scm-name').value = existing?.name || '';
+  document.getElementById('scm-delete').style.display = existing ? '' : 'none';
+
+  const fieldSel = document.getElementById('scm-adj-field');
+  fieldSel.innerHTML = PL_ADJ_FIELDS.map(f => `<option value="${f.key}">${f.label}</option>`).join('');
+
+  const periodSel = document.getElementById('scm-adj-period');
+  const allPeriods = Object.keys(deal.financials?.periods || {}).sort();
+  periodSel.innerHTML = `<option value="*">All periods</option>` + allPeriods.map(p => `<option value="${p}">${p}</option>`).join('');
+
+  const presetsEl = document.getElementById('scm-presets');
+  presetsEl.innerHTML = SC_PRESETS.map(p => `<button class="btn btn-outline" style="font-size:12px;padding:4px 9px;" data-preset="${escHtml(p.label)}">${escHtml(p.label)}</button>`).join('');
+  presetsEl.querySelectorAll('[data-preset]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const preset = SC_PRESETS.find(p => p.label === btn.dataset.preset);
+      if (!preset) return;
+      const nameEl = document.getElementById('scm-name');
+      if (!nameEl.value) nameEl.value = preset.label;
+      preset.adjs.forEach(a => _scAdj.push({ ...a }));
+      renderScmAdj();
+    });
+  });
+
+  _wireScmOnce();
+  renderScmColors();
+  renderScmAdj();
+  document.getElementById('scenario-modal').classList.remove('hidden');
+}
+
+let _scmWired = false;
+function _wireScmOnce() {
+  if (_scmWired) return;
+  _scmWired = true;
+
+  document.getElementById('scm-adj-add').addEventListener('click', () => {
+    const field  = document.getElementById('scm-adj-field').value;
+    const period = document.getElementById('scm-adj-period').value;
+    const type   = document.getElementById('scm-adj-type').value;
+    const value  = parseFloat(document.getElementById('scm-adj-value').value);
+    if (!field || isNaN(value)) return;
+    _scAdj.push({ field, period, type, value });
+    renderScmAdj();
+    document.getElementById('scm-adj-value').value = '';
+  });
+
+  document.getElementById('scm-save').addEventListener('click', () => {
+    const name = document.getElementById('scm-name').value.trim();
+    if (!name) { document.getElementById('scm-name').focus(); return; }
+    if (!deal.scenarios) deal.scenarios = [];
+    if (_scEditId) {
+      const sc = deal.scenarios.find(s => s.id === _scEditId);
+      if (sc) { sc.name = name; sc.color = _scColor; sc.adjustments = _scAdj; }
+    } else {
+      deal.scenarios.push({ id: `sc-${Date.now()}`, name, color: _scColor, active: true, adjustments: _scAdj });
+    }
+    saveDeal(deal);
+    document.getElementById('scenario-modal').classList.add('hidden');
+    renderScenarioPanel(); renderPLTable(getCurrentView()); renderCharts();
+  });
+
+  document.getElementById('scm-delete').addEventListener('click', () => {
+    if (!_scEditId) return;
+    deal.scenarios = (deal.scenarios||[]).filter(s => s.id !== _scEditId);
+    saveDeal(deal);
+    document.getElementById('scenario-modal').classList.add('hidden');
+    renderScenarioPanel(); renderPLTable(getCurrentView()); renderCharts();
+  });
+
+  document.getElementById('scm-cancel').addEventListener('click', () => document.getElementById('scenario-modal').classList.add('hidden'));
+  document.getElementById('scenario-modal').addEventListener('click', e => { if (e.target === document.getElementById('scenario-modal')) document.getElementById('scenario-modal').classList.add('hidden'); });
+}
+
+function renderScmColors() {
+  const wrap = document.getElementById('scm-colors');
+  if (!wrap) return;
+  wrap.innerHTML = SCENARIO_COLORS.map(c =>
+    `<div class="scm-color-dot${_scColor===c.hex?' selected':''}" style="background:${c.hex}" data-c="${c.hex}"></div>`
+  ).join('');
+  wrap.querySelectorAll('.scm-color-dot').forEach(dot => {
+    dot.addEventListener('click', () => { _scColor = dot.dataset.c; renderScmColors(); });
+  });
+}
+
+function renderScmAdj() {
+  const el = document.getElementById('scm-adj-list');
+  if (!el) return;
+  if (!_scAdj.length) { el.innerHTML = '<div style="font-size:12px;color:#bbb;padding:4px 0;">No adjustments yet — add one below or pick a preset</div>'; return; }
+  el.innerHTML = _scAdj.map((adj, i) => {
+    const fLabel = PL_ADJ_FIELDS.find(f => f.key === adj.field)?.label || adj.field;
+    const tLabel = adj.type === 'set' ? 'set to' : adj.type === 'pct' ? 'change' : '+/-';
+    const vLabel = adj.type === 'pct' ? `${adj.value > 0 ? '+' : ''}${adj.value}%` : `$${Number(adj.value).toLocaleString()}`;
+    const pLabel = adj.period === '*' ? 'all periods' : adj.period;
+    return `<div class="scm-adj-row"><span>${fLabel} (${pLabel}): ${tLabel} ${vLabel}</span><button class="btn btn-outline" style="font-size:11px;padding:2px 7px;" data-ri="${i}">✕</button></div>`;
+  }).join('');
+  el.querySelectorAll('[data-ri]').forEach(btn => {
+    btn.addEventListener('click', () => { _scAdj.splice(parseInt(btn.dataset.ri), 1); renderScmAdj(); });
+  });
+}
+
+// ─── Call Notes ────────────────────────────────────────────────────────────────
+function renderCallNotes() {
+  const notes = deal.callNotes || [];
+  const listEl = document.getElementById('call-notes-list');
+  if (!listEl) return;
+  if (notes.length === 0) {
+    listEl.innerHTML = '<div style="font-size:13px;color:#bbb;padding:8px 0;">No call notes yet. Add notes from owner calls, site visits, or broker conversations.</div>';
+    return;
+  }
+  listEl.innerHTML = notes.map((n, i) => `
+    <div class="call-note-card">
+      <div class="call-note-meta">
+        <strong>${escHtml(n.title || 'Untitled')}</strong> · ${new Date(n.createdAt).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'})}
+        <button class="btn btn-outline" style="font-size:11px;padding:2px 7px;margin-left:8px;color:#A32D2D;border-color:#ddd;" data-note-rm="${i}">Remove</button>
+      </div>
+      <div class="call-note-text">${escHtml(n.body)}</div>
+      ${n.coveredItemIds?.length ? `<div class="call-note-tags">${n.coveredItemIds.map(id => `<span class="doc-review-item-tag">${escHtml(id)}</span>`).join('')}</div>` : ''}
+    </div>
+  `).join('');
+  listEl.querySelectorAll('[data-note-rm]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      deal.callNotes.splice(parseInt(btn.dataset.noteRm), 1);
+      saveDeal(deal); renderCallNotes();
+    });
+  });
+}
+
+function setupCallNotes() {
+  const addBtn    = document.getElementById('add-call-note-btn');
+  const form      = document.getElementById('call-note-form');
+  const saveBtn   = document.getElementById('call-note-save-btn');
+  const cancelBtn = document.getElementById('call-note-cancel-btn');
+  const statusEl  = document.getElementById('call-note-status');
+  if (!addBtn) return;
+
+  addBtn.addEventListener('click', () => { form.style.display = form.style.display === 'none' ? '' : 'none'; });
+  cancelBtn.addEventListener('click', () => { form.style.display = 'none'; });
+
+  saveBtn.addEventListener('click', async () => {
+    const title = document.getElementById('call-note-title').value.trim();
+    const body  = document.getElementById('call-note-body').value.trim();
+    if (!body) { document.getElementById('call-note-body').focus(); return; }
+
+    saveBtn.disabled = true;
+    statusEl.textContent = 'Analyzing…';
+    statusEl.className = 'status-bar';
+
+    // Analyze note text to extract diligence links
+    let coveredItemIds = [], flags = [];
+    try {
+      const dealContext = {
+        name: deal.name, entity: deal.entity,
+        checklistItems: (deal.diligenceChecklist||[]).map(i => ({ id: i.id, item: i.item, category: i.category, status: i.status })),
+      };
+      const noteFile = {
+        name: title || 'call-notes.txt',
+        mediaType: 'text/plain',
+        data: btoa(unescape(encodeURIComponent(body)))
+      };
+      const resp = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file: noteFile, dealContext })
+      });
+      if (resp.ok) {
+        const result = await resp.json();
+        coveredItemIds = result.coveredItemIds || [];
+        flags = result.flags || [];
+        // Auto-update diligence statuses
+        if (result.diligenceUpdates) {
+          result.diligenceUpdates.forEach(upd => {
+            const item = (deal.diligenceChecklist||[]).find(i => i.id === upd.id);
+            if (item) { item.status = upd.status; if (upd.notes) item.notes = upd.notes; }
+          });
+        }
+      }
+    } catch (e) { /* silent fail */ }
+
+    if (!deal.callNotes) deal.callNotes = [];
+    deal.callNotes.unshift({ title: title || 'Call Notes', body, createdAt: new Date().toISOString(), coveredItemIds, flags });
+    saveDeal(deal);
+
+    document.getElementById('call-note-title').value = '';
+    document.getElementById('call-note-body').value = '';
+    form.style.display = 'none';
+    statusEl.textContent = '';
+    saveBtn.disabled = false;
+    renderCallNotes();
+    if (coveredItemIds.length) renderDiligence();
+  });
+
+  renderCallNotes();
+}
+
 function renderFinancials() {
+  renderScenarioPanel();
   renderCharts();
   renderPLTable('yearly');
 
@@ -1700,14 +2151,29 @@ function renderCharts() {
     }
   }
 
-  const chartLabels = estLabel ? [...years, estLabel] : years;
-  const revData  = years.map(y => periods[y]?.revenue || 0).concat(estRev != null ? [estRev] : []);
-  const opData   = years.map(y => periods[y]?.operatingIncome || 0).concat(estOp != null ? [estOp] : []);
-  const marginData = years.map(y => {
-    const p = periods[y];
-    if (!p || !p.revenue) return null;
+  const baseLabels = estLabel ? [...years, estLabel] : years;
+  const baseRevData = years.map(y => periods[y]?.revenue || 0).concat(estRev != null ? [estRev] : []);
+  const baseOpData  = years.map(y => periods[y]?.operatingIncome || 0).concat(estOp != null ? [estOp] : []);
+  const baseMarginData = years.map(y => {
+    const p = periods[y]; if (!p || !p.revenue) return null;
     return parseFloat(((p.operatingIncome / p.revenue) * 100).toFixed(1));
   }).concat(estMargin != null ? [estMargin] : []);
+
+  // Scenario overlay
+  const activeScenarios = (deal.scenarios || []).filter(s => s.active);
+  const scPeriods = activeScenarios.length ? applyScenarios(periods, activeScenarios) : null;
+  const scRevData    = scPeriods ? years.map(y => scPeriods[y]?.revenue ?? null).concat(estRev != null ? [null] : []) : null;
+  const scMarginData = scPeriods ? years.map(y => { const p = scPeriods[y]; return p?.revenue ? parseFloat(((p.operatingIncome/p.revenue)*100).toFixed(1)) : null; }).concat(estMargin != null ? [null] : []) : null;
+  const scColor = activeScenarios[0]?.color || '#E53935';
+
+  // Forecast extension
+  const fcData = computeForecastPeriods();
+  const fcKeys = Object.keys(fcData).sort();
+
+  const chartLabels = [...baseLabels, ...fcKeys];
+  const revData     = [...baseRevData,  ...fcKeys.map(k => fcData[k]?.revenue || 0)];
+  const opData      = [...baseOpData,   ...fcKeys.map(k => fcData[k]?.operatingIncome || 0)];
+  const marginData  = [...baseMarginData, ...fcKeys.map(k => { const p = fcData[k]; return p?.revenue ? parseFloat(((p.operatingIncome/p.revenue)*100).toFixed(1)) : null; })];
 
   // Register datalabels plugin globally
   if (window.ChartDataLabels) Chart.register(window.ChartDataLabels);
@@ -1743,13 +2209,15 @@ function renderCharts() {
     }
   };
 
-  // Estimated bars get a lighter style; Revenue uses solid blue so legend is readable
-  const revBg = revData.map((_, i) => i === revData.length - 1 && estLabel ? 'rgba(24,95,165,0.3)' : '#185FA5');
-  const opBg  = opData.map((v, i) => {
-    const isEst = i === opData.length - 1 && estLabel;
+  // Bar colors: solid for actuals, lighter for estimated, dashed-lighter for forecast
+  const baseRevBg = baseRevData.map((_, i) => i === baseRevData.length - 1 && estLabel ? 'rgba(24,95,165,0.3)' : '#185FA5');
+  const baseOpBg  = baseOpData.map((v, i) => {
+    const isEst = i === baseOpData.length - 1 && estLabel;
     if (v >= 0) return isEst ? 'rgba(15,110,86,0.35)' : '#0F6E56';
     return isEst ? 'rgba(163,45,45,0.35)' : '#A32D2D';
   });
+  const revBg = [...baseRevBg, ...fcKeys.map(() => 'rgba(24,95,165,0.2)')];
+  const opBg  = [...baseOpBg,  ...fcKeys.map(k => (fcData[k]?.operatingIncome ?? 0) >= 0 ? 'rgba(15,110,86,0.2)' : 'rgba(163,45,45,0.2)')];
 
   const hasLoss   = opData.some(v => v < 0);
   const hasProfit = opData.some(v => v >= 0);
@@ -1761,7 +2229,8 @@ function renderCharts() {
       labels: chartLabels,
       datasets: [
         { label: 'Revenue', data: revData, backgroundColor: revBg, borderRadius: 4 },
-        { label: 'Op. Income / (Loss)', data: opData, backgroundColor: opBg, borderRadius: 4 }
+        { label: 'Op. Income / (Loss)', data: opData, backgroundColor: opBg, borderRadius: 4 },
+        ...(scRevData ? [{ type: 'line', label: 'Scenario Revenue', data: [...scRevData, ...fcKeys.map(()=>null)], borderColor: scColor, borderDash: [5,4], borderWidth: 2, backgroundColor: 'transparent', pointBackgroundColor: scColor, pointRadius: 4, tension: 0.3, datalabels: { display: false } }] : [])
       ]
     },
     options: {
@@ -1795,20 +2264,22 @@ function renderCharts() {
     type: 'line',
     data: {
       labels: chartLabels,
-      datasets: [{
-        label: 'Op. Margin %',
-        data: marginData,
-        borderColor: '#185FA5',
-        backgroundColor: 'rgba(24,95,165,0.08)',
-        pointBackgroundColor: marginData.map((v, i) => v == null ? 'transparent' : i === marginData.length - 1 && estLabel ? 'rgba(24,95,165,0.45)' : v >= 0 ? '#185FA5' : '#A32D2D'),
-        pointStyle: marginData.map((_, i) => i === marginData.length - 1 && estLabel ? 'circle' : 'circle'),
-        pointBorderColor: marginData.map((_, i) => i === marginData.length - 1 && estLabel ? '#185FA5' : 'transparent'),
-        pointBorderWidth: marginData.map((_, i) => i === marginData.length - 1 && estLabel ? 2 : 0),
-        pointRadius: 5,
-        segment: { borderDash: ctx => ctx.p1DataIndex === marginData.length - 1 && estLabel ? [4, 3] : [] },
-        tension: 0.3,
-        fill: true
-      }]
+      datasets: [
+        {
+          label: 'Op. Margin %',
+          data: marginData,
+          borderColor: '#185FA5',
+          backgroundColor: 'rgba(24,95,165,0.08)',
+          pointBackgroundColor: marginData.map((v, i) => v == null ? 'transparent' : i >= baseMarginData.length ? 'rgba(24,95,165,0.35)' : i === baseMarginData.length - 1 && estLabel ? 'rgba(24,95,165,0.45)' : v >= 0 ? '#185FA5' : '#A32D2D'),
+          pointBorderColor: marginData.map((_, i) => i >= baseMarginData.length || (i === baseMarginData.length - 1 && estLabel) ? '#185FA5' : 'transparent'),
+          pointBorderWidth: marginData.map((_, i) => i >= baseMarginData.length || (i === baseMarginData.length - 1 && estLabel) ? 2 : 0),
+          pointRadius: 5,
+          segment: { borderDash: ctx => ctx.p1DataIndex >= baseMarginData.length || (ctx.p1DataIndex === baseMarginData.length - 1 && estLabel) ? [4, 3] : [] },
+          tension: 0.3,
+          fill: true
+        },
+        ...(scMarginData ? [{ label: 'Scenario Margin %', data: [...scMarginData, ...fcKeys.map(()=>null)], borderColor: scColor, borderDash: [5,4], borderWidth: 2, backgroundColor: 'transparent', pointBackgroundColor: scColor, pointRadius: 4, tension: 0.3, datalabels: { display: false } }] : [])
+      ]
     },
     options: {
       ...chartDefaults,
@@ -1951,66 +2422,75 @@ function annLabel(key) {
 
 function renderPLTable(view) {
   const basePeriods = getPeriodsForView(view);
-  const lineItems = deal.financials?.lineItems || [];
-  const data = deal.financials?.periods || {};
+  const lineItems   = deal.financials?.lineItems || [];
+  const baseData    = deal.financials?.periods || {};
+
+  const activeScenarios = (deal.scenarios || []).filter(s => s.active);
+  const scenarioActive  = activeScenarios.length > 0;
+  const displayData     = scenarioActive ? applyScenarios(baseData, activeScenarios) : baseData;
+
+  const fcData = view === 'yearly' ? computeForecastPeriods() : {};
+  const fcKeys = Object.keys(fcData).sort();
 
   const thead = document.getElementById('pl-thead');
   const tbody = document.getElementById('pl-tbody');
 
-  if (basePeriods.length === 0) {
+  if (basePeriods.length === 0 && fcKeys.length === 0) {
     thead.innerHTML = '';
     tbody.innerHTML = `<tr><td colspan="2" style="padding:20px;text-align:center;color:#aaa;font-style:italic;">No ${view} periods found in the data.</td></tr>`;
     return;
   }
 
-  // Build column list: for each partial period, insert an annualized synthetic column after it
-  // Each column: { key, label, isActual, isPartial, isAnn, factor }
+  // Build columns: base + annualized + forecast
   const columns = [];
   for (const k of basePeriods) {
     const partial = isPartialPeriod(k);
-    const factor = partial ? getAnnFactor(k) : null;
-    columns.push({ key: k, label: formatPeriodHeader(k), isActual: !partial, isPartial: partial, isAnn: false, factor: null });
+    const factor  = partial ? getAnnFactor(k) : null;
+    columns.push({ key: k, label: formatPeriodHeader(k), isActual: !partial, isPartial: partial, isAnn: false, factor: null, isForecast: false, data: displayData });
     if (partial && factor && view === 'yearly') {
-      columns.push({ key: k, label: annLabel(k), isActual: false, isPartial: false, isAnn: true, factor });
+      columns.push({ key: k, label: annLabel(k), isActual: false, isPartial: false, isAnn: true, factor, isForecast: false, data: displayData });
     }
+  }
+  for (const k of fcKeys) {
+    columns.push({ key: k, label: k, isActual: false, isPartial: false, isAnn: false, factor: null, isForecast: true, data: fcData });
   }
 
   const colCount = columns.length + 1;
 
-  // ── Two-row thead ──────────────────────────────────────────────────────────
-  // Row 1: category spans (Actuals / Estimated)
-  const actualCols = columns.filter(c => c.isActual).length;
-  const estCols = columns.filter(c => !c.isActual).length;
+  // Two-row thead
+  const histCols  = columns.filter(c => !c.isForecast);
+  const actCols   = histCols.filter(c => c.isActual).length;
+  const estCols   = histCols.filter(c => !c.isActual).length;
+  const fcColCount = fcKeys.length;
+
   let row1 = '<tr class="thead-category"><th></th>';
-  if (actualCols > 0) row1 += `<th colspan="${actualCols}" class="th-actuals">Actuals</th>`;
-  if (estCols > 0)    row1 += `<th colspan="${estCols}" class="th-estimated">Estimated</th>`;
+  if (actCols > 0) row1 += `<th colspan="${actCols}" class="th-actuals${scenarioActive?' th-scenario-adj':''}">${scenarioActive ? 'Scenario (Adjusted)' : 'Actuals'}</th>`;
+  if (estCols > 0) row1 += `<th colspan="${estCols}" class="th-estimated${scenarioActive?' th-scenario-adj':''}">${scenarioActive ? 'Estimated (Adj.)' : 'Estimated'}</th>`;
+  if (fcColCount > 0) row1 += `<th colspan="${fcColCount}" class="th-actuals th-forecast">Forecast</th>`;
   row1 += '</tr>';
 
-  // Row 2: individual period labels
   const row2Cells = columns.map(c => {
-    if (c.isPartial) return `<th>${c.label}<span class="partial-label">(partial)</span></th>`;
-    if (c.isAnn)     return `<th class="th-ann">${c.label}<span class="partial-label">annualized</span></th>`;
-    return `<th>${c.label}</th>`;
+    const fc = c.isForecast ? ' class="th-forecast"' : '';
+    if (c.isPartial) return `<th${fc}>${c.label}<span class="partial-label">(partial)</span></th>`;
+    if (c.isAnn)     return `<th class="th-ann${c.isForecast?' th-forecast':''}">${c.label}<span class="partial-label">annualized</span></th>`;
+    return `<th${fc}>${c.label}</th>`;
   }).join('');
   const row2 = `<tr><th>Line Item</th>${row2Cells}</tr>`;
-
   thead.innerHTML = row1 + row2;
 
-  // ── Rows ──────────────────────────────────────────────────────────────────
+  // Rows
   const itemByKey = Object.fromEntries(lineItems.map(i => [i.key, i]));
 
   function renderCell(col, item) {
-    const p = data[col.key] || {};
+    const p      = col.data[col.key] || {};
     const rawVal = p[item.key];
-    const val = col.isAnn && rawVal != null ? rawVal * col.factor : rawVal;
-
-    if (val === null || val === undefined) return `<td class="cell-null">—</td>`;
-
-    const isNeg = val < 0;
-    const revenue = col.isAnn && p.revenue != null ? p.revenue * col.factor : p.revenue;
-    const showPct = item.type === 'expense' && revenue && revenue !== 0 && val !== 0;
-    const pct = showPct ? (val / revenue * 100).toFixed(1) + '%' : '';
-    const cls = [isNeg ? 'cell-neg' : '', col.isAnn ? 'cell-ann' : ''].filter(Boolean).join(' ');
+    const val    = col.isAnn && rawVal != null ? rawVal * col.factor : rawVal;
+    if (val === null || val === undefined) return `<td class="${col.isForecast?'cell-forecast':''} cell-null">—</td>`;
+    const isNeg    = val < 0;
+    const revenue  = col.isAnn && p.revenue != null ? p.revenue * col.factor : p.revenue;
+    const showPct  = item.type === 'expense' && revenue && revenue !== 0 && val !== 0;
+    const pct      = showPct ? (val / revenue * 100).toFixed(1) + '%' : '';
+    const cls      = [isNeg ? 'cell-neg' : '', col.isAnn ? 'cell-ann' : '', col.isForecast ? 'cell-forecast' : (scenarioActive ? 'cell-scenario' : '')].filter(Boolean).join(' ');
     return `<td class="${cls}">${fmt$(val)}${pct ? `<span class="pct-sub">${pct} rev</span>` : ''}</td>`;
   }
 
@@ -2776,6 +3256,7 @@ function renderDocuments() {
   renderDataRoom();
   setupDocDropzone();
   setupUploadToggle();
+  setupCallNotes();
 }
 
 function setupUploadToggle() {
@@ -3410,6 +3891,53 @@ function appendChatBubble(role, content, isTyping = false) {
   }
 }
 </script>
+
+<!-- ── Scenario Modal ──────────────────────────────────────────────────── -->
+<div class="modal-overlay hidden" id="scenario-modal">
+  <div class="doc-review-card" style="max-width:500px;">
+    <div class="doc-review-header">
+      <div style="flex:1;">
+        <div class="doc-review-file-name" id="scm-title">Add Scenario</div>
+        <div class="doc-review-progress">Adjust financial line items to stress-test or model outcomes</div>
+      </div>
+    </div>
+    <div class="doc-review-body" style="max-height:70vh;">
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#888;display:block;margin-bottom:5px;">Scenario Name</label>
+        <input type="text" id="scm-name" placeholder="e.g. Revenue -10%, Normalize Rent" style="width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:8px;font-size:14px;">
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#888;display:block;margin-bottom:6px;">Color</label>
+        <div id="scm-colors" style="display:flex;gap:8px;"></div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#888;display:block;margin-bottom:6px;">Quick Presets</label>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;" id="scm-presets"></div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <label style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:#888;display:block;margin-bottom:6px;">Adjustments</label>
+        <div id="scm-adj-list" style="margin-bottom:10px;"></div>
+        <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+          <select id="scm-adj-field" style="flex:2;min-width:120px;padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:12px;"></select>
+          <select id="scm-adj-period" style="width:100px;padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:12px;"></select>
+          <select id="scm-adj-type" style="width:90px;padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:12px;">
+            <option value="pct">% Change</option>
+            <option value="delta">+/- $</option>
+            <option value="set">Set to $</option>
+          </select>
+          <input type="number" id="scm-adj-value" placeholder="e.g. -10" style="width:72px;padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:12px;">
+          <button class="btn btn-dark" id="scm-adj-add" style="font-size:12px;padding:6px 10px;">Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="doc-review-footer">
+      <button class="btn btn-outline" id="scm-delete" style="color:#A32D2D;border-color:#ddd;display:none;font-size:13px;">Delete</button>
+      <div style="flex:1;"></div>
+      <button class="btn btn-outline" id="scm-cancel" style="font-size:13px;">Cancel</button>
+      <button class="btn btn-dark" id="scm-save" style="font-size:13px;">Save Scenario</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── Doc Review Modal ─────────────────────────────────────────────────── -->
 <div class="modal-overlay hidden" id="doc-review-modal">
